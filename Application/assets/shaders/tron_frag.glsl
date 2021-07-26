@@ -135,7 +135,7 @@ void main(){
 
 
 
-    color = emitTexture +  diffusePointsSum + diffuseSpotSum;
+    color = emitTexture + diffTexture * vec4(0.5f,0.5f,0.5f, 0.0f) +  diffusePointsSum + diffuseSpotSum;
 
 }
 

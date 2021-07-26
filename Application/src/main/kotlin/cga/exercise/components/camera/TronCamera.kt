@@ -7,7 +7,7 @@ import org.joml.Math.toRadians
 import org.joml.Matrix4f
 import org.joml.Vector3f
 
-class TronCamera(val FieldofView: Float = 90f,val AspectRatio : Float = 16f/9f, val NearPlane: Float = 0.1f, val FarPlane: Float = 100f, modelMatrix: Matrix4f = Matrix4f(), parent: Transformable? = null) : Transformable(modelMatrix, parent), ICamera{
+class TronCamera(val FieldofView: Float = 90f,val AspectRatio : Float = 16f/9f, val NearPlane: Float = 0.1f, val FarPlane: Float = 10000f, modelMatrix: Matrix4f = Matrix4f(), parent: Transformable? = null) : Transformable(modelMatrix, parent), ICamera{
 
     override fun getCalculateViewMatrix(): Matrix4f {
         return Matrix4f().lookAt(getWorldPosition(),getWorldPosition().sub(getWorldZAxis()), getWorldYAxis())

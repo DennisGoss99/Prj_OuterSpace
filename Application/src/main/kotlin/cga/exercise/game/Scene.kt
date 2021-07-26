@@ -29,7 +29,7 @@ class Scene(private val window: GameWindow) {
     private val StaticShader: ShaderProgram = ShaderProgram("assets/shaders/tron_vert.glsl", "assets/shaders/tron_frag.glsl")
 
     private val groundRenderable : Renderable= ModelLoader.loadModel("assets/models/ground.obj",0f,0f,0f)!!
-    //private val spacecraftRenderable : Renderable= ModelLoader.loadModel("C:\\Users\\Merdo\\Desktop\\Unbenannt.obj",0f,0f,0f)!!
+    private val sphereRenderable : Renderable= ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!
 
     private val pointLightHolder = PointLightHolder( mutableListOf(
         PointLight(Vector3f(20f,1f,20f),Vector3f(1f,0f,1f)),
@@ -62,6 +62,7 @@ class Scene(private val window: GameWindow) {
 
 
 
+
         val diff = Texture2D("assets/textures/ground_diff.png",true)
         val emit = Texture2D("assets/textures/ground_emit.png",true)
         val spec = Texture2D("assets/textures/ground_spec.png",true)
@@ -71,16 +72,29 @@ class Scene(private val window: GameWindow) {
         emit.setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR)
         spec.setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR)
 
+        val diff2 = Texture2D("assets/textures/planets/earth_diff.png",true)
+        val emit2 = Texture2D("assets/textures/planets/earth_emit.png",true)
+        diff2.setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR)
+        emit2.setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR)
+
+        var material2 = Material(diff2,emit2,spec,64f,Vector2f(1f))
+
         var material = Material(diff,emit,spec,64f,Vector2f(64f))
 
         groundRenderable?.meshes.forEach { m ->
            m.material = material
         }
 
+        sphereRenderable?.meshes.forEach { m ->
+            m.material = material2
+        }
 
+        camera.translateGlobal(Vector3f(0f, 2f, 5f))
         camera.rotateLocal(toRadians(-35f),0f,0f)
-        camera.translateGlobal(Vector3f(0f, 0f, 4f))
 
+
+        //sphereRenderable.scaleLocal(Vector3f(20f))
+        //sphereRenderable.translateLocal(Vector3f(0f,1f,0f))
         //spacecraftRenderable.scaleLocal(Vector3f(0.02f))
 
     }
@@ -94,9 +108,9 @@ class Scene(private val window: GameWindow) {
         pointLightHolder.bind(StaticShader,"pointLight")
         spotLightHolder.bind(StaticShader,"spotLight", camera.getCalculateViewMatrix())
 
-        StaticShader.setUniform("emitColor", Vector3f(0f,1f,0f))
+        StaticShader.setUniform("emitColor", Vector3f(0f,0.5f,1f))
 
-        //spacecraftRenderable.render(StaticShader)
+        sphereRenderable.render(StaticShader)
         groundRenderable.render(StaticShader)
 
 
@@ -105,7 +119,7 @@ class Scene(private val window: GameWindow) {
 
     fun update(dt: Float, t: Float) {
         val rotationMultiplier = toRadians(45f)
-        val translationMultiplier = 5.0f
+        val translationMultiplier = 10.0f
 
         if (window.getKeyState(GLFW_KEY_Q)) {
             camera.translateLocal(Vector3f(0.0f, translationMultiplier * dt,0.0f ))
@@ -122,6 +136,13 @@ class Scene(private val window: GameWindow) {
             camera.translateLocal(Vector3f(0.0f, 0.0f, translationMultiplier * dt))
         }
 
+        if (window.getKeyState ( GLFW_KEY_A)) {
+            camera.rotateLocal(0.0f, 0.0f, rotationMultiplier* dt)
+        }
+
+        if (window.getKeyState ( GLFW_KEY_D)) {
+            camera.rotateLocal(0.0f, 0.0f, -rotationMultiplier* dt)
+        }
 
 
     }
@@ -133,7 +154,7 @@ class Scene(private val window: GameWindow) {
 
     fun onMouseMove(xpos: Double, ypos: Double) {
 
-        camera.rotateLocal((oldYpos-ypos).toFloat()/200.0f, 0f, (oldXpos-xpos).toFloat()/200.0f)
+        camera.rotateLocal((oldYpos-ypos).toFloat()/200.0f, (oldXpos-xpos).toFloat()/200.0f, 0f)
 
 //        camera.translateLocal(Vector3f(0f, 0f, -4f))
 //        camera.rotateAroundPoint(0f, (oldXpos-xpos).toFloat() * 0.0002f,0f, Vector3f(0f,0f,0f))
