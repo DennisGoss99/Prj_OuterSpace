@@ -29,7 +29,7 @@ class Scene(private val window: GameWindow) {
     private val StaticShader: ShaderProgram = ShaderProgram("assets/shaders/tron_vert.glsl", "assets/shaders/tron_frag.glsl")
 
     private val groundRenderable : Renderable= ModelLoader.loadModel("assets/models/ground.obj",0f,0f,0f)!!
-    private val testRenderable : Renderable= ModelLoader.loadModel("C:\\Users\\Merdo\\Desktop\\Unbenannt.obj",0f,0f,0f)!!
+    //private val spacecraftRenderable : Renderable= ModelLoader.loadModel("C:\\Users\\Merdo\\Desktop\\Unbenannt.obj",0f,0f,0f)!!
 
     private val pointLightHolder = PointLightHolder( mutableListOf(
         PointLight(Vector3f(20f,1f,20f),Vector3f(1f,0f,1f)),
@@ -66,10 +66,6 @@ class Scene(private val window: GameWindow) {
         val emit = Texture2D("assets/textures/ground_emit.png",true)
         val spec = Texture2D("assets/textures/ground_spec.png",true)
 
-        val diff2 = Texture2D("C:\\Users\\Merdo\\Desktop\\Unbenannt2.png",true)
-        val emit2 = Texture2D("C:\\Users\\Merdo\\Desktop\\Unbenannt.png",true)
-        diff2.setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR)
-        emit2.setTexParams(GL_REPEAT,GL_CLAMP,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR)
 
         diff.setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR)
         emit.setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR)
@@ -82,18 +78,10 @@ class Scene(private val window: GameWindow) {
         }
 
 
-
-        var material2 = Material(diff2,emit2,spec,64f,Vector2f(1f))
-
-        testRenderable?.meshes.forEach { m ->
-            m.material = material2
-        }
-
-        testRenderable.scaleLocal(Vector3f(0.02f))
-        testRenderable.translateGlobal(Vector3f(0f, 1.5f, 0f))
-
         camera.rotateLocal(toRadians(-35f),0f,0f)
-        camera.translateLocal(Vector3f(0f, 0f, 4f))
+        camera.translateGlobal(Vector3f(0f, 0f, 4f))
+
+        //spacecraftRenderable.scaleLocal(Vector3f(0.02f))
 
     }
 
@@ -104,13 +92,11 @@ class Scene(private val window: GameWindow) {
         camera.bind(StaticShader)
 
         pointLightHolder.bind(StaticShader,"pointLight")
-
         spotLightHolder.bind(StaticShader,"spotLight", camera.getCalculateViewMatrix())
 
-        StaticShader.setUniform("emitColor", Vector3f(Math.abs( Math.sin(t)),Math.abs( Math.sin(t +0.5f)),Math.abs( Math.sin(t+1f))))
-
         StaticShader.setUniform("emitColor", Vector3f(0f,1f,0f))
-        testRenderable.render(StaticShader)
+
+        //spacecraftRenderable.render(StaticShader)
         groundRenderable.render(StaticShader)
 
 
@@ -121,21 +107,21 @@ class Scene(private val window: GameWindow) {
         val rotationMultiplier = toRadians(45f)
         val translationMultiplier = 5.0f
 
-        if (!(window.getKeyState ( GLFW_KEY_A ) || window.getKeyState ( GLFW_KEY_D )) && window.getKeyState(GLFW_KEY_W)) {
+        if (window.getKeyState(GLFW_KEY_Q)) {
+            camera.translateLocal(Vector3f(0.0f, translationMultiplier * dt,0.0f ))
+        }
+        if (window.getKeyState(GLFW_KEY_E)) {
+            camera.translateLocal(Vector3f(0.0f, -translationMultiplier * dt,0.0f ))
+        }
+
+
+        if (window.getKeyState ( GLFW_KEY_W)) {
             camera.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt))
         }
-        if (!(window.getKeyState ( GLFW_KEY_A ) || window.getKeyState ( GLFW_KEY_D )) && window.getKeyState(GLFW_KEY_S)) {
+        if (window.getKeyState ( GLFW_KEY_S)) {
             camera.translateLocal(Vector3f(0.0f, 0.0f, translationMultiplier * dt))
         }
 
-        if ( window.getKeyState ( GLFW_KEY_D )){
-            camera.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt))
-            camera.rotateLocal(0.0f,-rotationMultiplier * dt,0.0f);
-        }
-        if ( window . getKeyState ( GLFW_KEY_A )){
-            camera.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt))
-            camera.rotateLocal(0.0f,rotationMultiplier * dt,0.0f);
-        }
 
 
     }
@@ -143,14 +129,18 @@ class Scene(private val window: GameWindow) {
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {}
 
     var oldXpos : Double = 0.0;
+    var oldYpos : Double = 0.0;
 
     fun onMouseMove(xpos: Double, ypos: Double) {
 
-        camera.translateLocal(Vector3f(0f, 0f, -4f))
-        camera.rotateAroundPoint(0f, (oldXpos-xpos).toFloat() * 0.0002f,0f, Vector3f(0f,0f,0f))
-        camera.translateLocal(Vector3f(0f, 0f, 4f))
+        camera.rotateLocal((oldYpos-ypos).toFloat()/200.0f, 0f, (oldXpos-xpos).toFloat()/200.0f)
 
-        oldXpos = xpos;
+//        camera.translateLocal(Vector3f(0f, 0f, -4f))
+//        camera.rotateAroundPoint(0f, (oldXpos-xpos).toFloat() * 0.0002f,0f, Vector3f(0f,0f,0f))
+//        camera.translateLocal(Vector3f(0f, 0f, 4f))
+//
+        oldXpos = xpos
+        oldYpos = ypos
     }
 
 
