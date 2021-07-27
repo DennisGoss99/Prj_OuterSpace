@@ -11,7 +11,7 @@ import java.nio.ByteBuffer
 /**
  * Created by Fabian on 16.09.2017.
  */
-class Texture2D(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Boolean): ITexture{
+class Texture2D(imageData: ByteBuffer, width: Int, height : Int, genMipMaps: Boolean): ITexture{
     public var texID: Int = -1
         private set
 
@@ -62,7 +62,7 @@ class Texture2D(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Bool
 
     override fun setTexParams(wrapS: Int, wrapT: Int, minFilter: Int, magFilter: Int) {
 
-        glBindTexture(GL_TEXTURE_2D,texID);
+        glBindTexture(GL_TEXTURE_2D,texID)
         glTexParameterIi(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,wrapS)
         glTexParameterIi(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,wrapT)
         glTexParameterIi(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter)
@@ -80,7 +80,6 @@ class Texture2D(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Bool
 
     override fun unbind() {
         glBindTexture(GL_TEXTURE_2D, 0)
-
     }
 
     override fun cleanup() {

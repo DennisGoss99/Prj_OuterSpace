@@ -3,6 +3,7 @@ package cga.exercise.game
 import cga.exercise.components.camera.TronCamera
 import cga.exercise.components.geometry.Material
 import cga.exercise.components.geometry.Renderable
+import cga.exercise.components.geometry.skybox.SkyboxRenderer
 import cga.exercise.components.light.PointLight
 import cga.exercise.components.light.PointLightHolder
 import cga.exercise.components.light.SpotLight
@@ -25,7 +26,9 @@ import org.lwjgl.opengl.GL11.*
  */
 class Scene(private val window: GameWindow) {
 
-    private val MainShader: ShaderProgram = ShaderProgram("assets/shaders/main_vert.glsl", "assets/shaders/main_frag.glsl")
+    private val mainShader: ShaderProgram = ShaderProgram("assets/shaders/main_vert.glsl", "assets/shaders/main_frag.glsl")
+    private val skyBoxShader: ShaderProgram = ShaderProgram("assets/shaders/skyBox_vert.glsl", "assets/shaders/skyBox_frag.glsl")
+    private val mainShader2: ShaderProgram = ShaderProgram("assets/shaders/main_vert.glsl", "assets/shaders/main_frag2.glsl")
 
     private val groundRenderable : Renderable= ModelLoader.loadModel("assets/models/ground.obj",0f,0f,0f)!!
     private val sphereRenderable : Renderable= ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!
@@ -45,6 +48,9 @@ class Scene(private val window: GameWindow) {
 
 
     var camera: TronCamera = TronCamera(modelMatrix = Matrix4f())
+
+    var skyboxRenderer = SkyboxRenderer()
+
 
     //scene setup
     init {
@@ -102,18 +108,22 @@ class Scene(private val window: GameWindow) {
 
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
-        camera.bind(MainShader)
-
-        pointLightHolder.bind(MainShader,"pointLight")
-        spotLightHolder.bind(MainShader,"spotLight", camera.getCalculateViewMatrix())
-
-        MainShader.setUniform("emitColor", Vector3f(0f,0.5f,1f))
-
-        sphereRenderable.render(MainShader)
-        groundRenderable.render(MainShader)
 
 
 
+
+        //pointLightHolder.bind(mainShader,"pointLight")
+        //spotLightHolder.bind(mainShader,"spotLight", camera.getCalculateViewMatrix())
+
+        //mainShader.setUniform("emitColor", Vector3f(0f,0.5f,1f))
+        sphereRenderable.render(mainShader)
+        groundRenderable.render(mainShader)
+        camera.bind(mainShader)
+
+        skyboxRenderer.render(skyBoxShader)
+        camera.bind(skyBoxShader)
+
+        //skyBoxShader.use()
     }
 
     fun update(dt: Float, t: Float) {
