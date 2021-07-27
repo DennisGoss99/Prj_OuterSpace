@@ -4,12 +4,12 @@ import cga.exercise.components.geometry.Mesh
 import java.util.jar.Attributes
 import cga.exercise.components.geometry.VertexAttribute
 import cga.exercise.components.shader.ShaderProgram
+import cga.exercise.components.texture.CubeTexture
 import org.lwjgl.opengl.GL11.*
 
 
-class SkyboxRenderer{
+class Skybox(private val SIZE : Float = 500f, private val textures : List<String>){
 
-private val SIZE = 3f
 
 private val mesh : Mesh
 
@@ -44,12 +44,14 @@ private val mesh : Mesh
     )
 
     init {
-        mesh = Mesh(VBO,IBO,VAO, null)
+
+        val material = SkyboxMaterial(CubeTexture(textures,false))
+        mesh = Mesh(VBO,IBO,VAO, material)
     }
 
     fun render(shaderProgram: ShaderProgram){
         shaderProgram.use()
-        mesh.render()
+        mesh.render(shaderProgram)
     }
 
 

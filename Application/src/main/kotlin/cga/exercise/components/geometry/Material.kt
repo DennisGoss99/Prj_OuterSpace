@@ -9,9 +9,9 @@ class Material(var diff: Texture2D,
                var emit: Texture2D,
                var specular: Texture2D,
                var shininess: Float = 50.0f,
-               var tcMultiplier : Vector2f = Vector2f(1.0f)) {
+               var tcMultiplier : Vector2f = Vector2f(1.0f)) : IMaterial {
 
-    fun bind(shaderProgram: ShaderProgram) {
+    override fun bind(shaderProgram: ShaderProgram) {
 
         shaderProgram.setUniform("diff",0)
         diff.bind(0)

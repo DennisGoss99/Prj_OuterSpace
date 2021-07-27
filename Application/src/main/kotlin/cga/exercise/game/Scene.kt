@@ -3,7 +3,7 @@ package cga.exercise.game
 import cga.exercise.components.camera.TronCamera
 import cga.exercise.components.geometry.Material
 import cga.exercise.components.geometry.Renderable
-import cga.exercise.components.geometry.skybox.SkyboxRenderer
+import cga.exercise.components.geometry.skybox.Skybox
 import cga.exercise.components.light.PointLight
 import cga.exercise.components.light.PointLightHolder
 import cga.exercise.components.light.SpotLight
@@ -28,7 +28,6 @@ class Scene(private val window: GameWindow) {
 
     private val mainShader: ShaderProgram = ShaderProgram("assets/shaders/main_vert.glsl", "assets/shaders/main_frag.glsl")
     private val skyBoxShader: ShaderProgram = ShaderProgram("assets/shaders/skyBox_vert.glsl", "assets/shaders/skyBox_frag.glsl")
-    private val mainShader2: ShaderProgram = ShaderProgram("assets/shaders/main_vert.glsl", "assets/shaders/main_frag2.glsl")
 
     private val groundRenderable : Renderable= ModelLoader.loadModel("assets/models/ground.obj",0f,0f,0f)!!
     private val sphereRenderable : Renderable= ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!
@@ -49,7 +48,14 @@ class Scene(private val window: GameWindow) {
 
     var camera: TronCamera = TronCamera(modelMatrix = Matrix4f())
 
-    var skyboxRenderer = SkyboxRenderer()
+    private var skyboxRenderer = Skybox(500.0f, listOf(
+        "assets/textures/skybox/BluePinkNebular_right.png",
+        "assets/textures/skybox/BluePinkNebular_left.png",
+        "assets/textures/skybox/BluePinkNebular_bottom.png",
+        "assets/textures/skybox/BluePinkNebular_top.png",
+        "assets/textures/skybox/BluePinkNebular_back.png",
+        "assets/textures/skybox/BluePinkNebular_front.png"
+    ))
 
 
     //scene setup
@@ -108,22 +114,19 @@ class Scene(private val window: GameWindow) {
 
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
+        pointLightHolder.bind(mainShader,"pointLight")
+        spotLightHolder.bind(mainShader,"spotLight", camera.getCalculateViewMatrix())
 
+        mainShader.setUniform("emitColor", Vector3f(0f,0.5f,1f))
 
-
-
-        //pointLightHolder.bind(mainShader,"pointLight")
-        //spotLightHolder.bind(mainShader,"spotLight", camera.getCalculateViewMatrix())
-
-        //mainShader.setUniform("emitColor", Vector3f(0f,0.5f,1f))
+//        groundRenderable.render(mainShader)
         sphereRenderable.render(mainShader)
-        groundRenderable.render(mainShader)
         camera.bind(mainShader)
+
 
         skyboxRenderer.render(skyBoxShader)
         camera.bind(skyBoxShader)
 
-        //skyBoxShader.use()
     }
 
     fun update(dt: Float, t: Float) {
@@ -140,6 +143,9 @@ class Scene(private val window: GameWindow) {
 
         if (window.getKeyState ( GLFW_KEY_W)) {
             camera.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt))
+        }
+        if (window.getKeyState ( GLFW_KEY_G)) {
+            camera.translateLocal(Vector3f(0.0f, 0.0f, translationMultiplier * dt * 100))
         }
         if (window.getKeyState ( GLFW_KEY_S)) {
             camera.translateLocal(Vector3f(0.0f, 0.0f, translationMultiplier * dt))

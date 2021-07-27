@@ -17,7 +17,7 @@ import org.lwjgl.opengl.GL30.*
  *
  * Created by Fabian on 16.09.2017.
  */
-class Mesh(vertexdata: FloatArray, indexdata: IntArray, attributes: Array<VertexAttribute>, var material: Material?) {
+class Mesh(vertexdata: FloatArray, indexdata: IntArray, attributes: Array<VertexAttribute>, var material: IMaterial?) {
     //private data
     private var vao = 0
     private var vbo = 0
@@ -57,7 +57,7 @@ class Mesh(vertexdata: FloatArray, indexdata: IntArray, attributes: Array<Vertex
     /**
      * renders the mesh
      */
-    fun render() {
+    private fun render() {
         // activate VAO
         glBindVertexArray(vao);
 
@@ -68,7 +68,7 @@ class Mesh(vertexdata: FloatArray, indexdata: IntArray, attributes: Array<Vertex
     }
 
     fun render(shaderProgram: ShaderProgram) {
-
+        shaderProgram.use()
         material?.bind(shaderProgram)
         render()
     }

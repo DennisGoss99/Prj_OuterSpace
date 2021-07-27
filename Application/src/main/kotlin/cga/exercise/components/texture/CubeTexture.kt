@@ -76,12 +76,24 @@ class CubeTexture(imageData: List<ByteBuffer>, val width: Int,val height : Int, 
 
         glTexParameterIi(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         glTexParameterIi(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+        unbind()
     }
 
-//    fun bind(textureUnit: Int) {
-//
+//    override fun processTexture(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Boolean) {
+//        TODO("Not yet implemented")
 //    }
+//
+//    override fun setTexParams(wrapS: Int, wrapT: Int, minFilter: Int, magFilter: Int) {
+//        TODO("Not yet implemented")
+//    }
+
+    fun bind(textureUnit: Int) {
+        glActiveTexture(GL_TEXTURE0+textureUnit)
+        glBindTexture(GL_TEXTURE_CUBE_MAP, texID)
+    }
 
     fun unbind() {
         glBindTexture(GL_TEXTURE_CUBE_MAP, 0)
