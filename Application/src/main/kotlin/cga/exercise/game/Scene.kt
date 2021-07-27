@@ -144,12 +144,19 @@ class Scene(private val window: GameWindow) {
         if (window.getKeyState ( GLFW_KEY_W)) {
             camera.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt))
         }
-        if (window.getKeyState ( GLFW_KEY_G)) {
-            camera.translateLocal(Vector3f(0.0f, 0.0f, translationMultiplier * dt * 100))
-        }
+
         if (window.getKeyState ( GLFW_KEY_S)) {
             camera.translateLocal(Vector3f(0.0f, 0.0f, translationMultiplier * dt))
         }
+
+        if (window.getKeyState ( GLFW_KEY_G)) {
+            camera.translateLocal(Vector3f(0.0f, 0.0f, translationMultiplier * dt * 100))
+        }
+
+        if (window.getKeyState ( GLFW_KEY_T)) {
+            camera.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt * 100))
+        }
+
 
         if (window.getKeyState ( GLFW_KEY_A)) {
             camera.rotateLocal(0.0f, 0.0f, rotationMultiplier* dt)
