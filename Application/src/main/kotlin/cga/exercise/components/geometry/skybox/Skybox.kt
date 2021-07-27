@@ -1,5 +1,6 @@
 package cga.exercise.components.geometry.skybox
 
+import cga.exercise.components.geometry.IRenderable
 import cga.exercise.components.geometry.Mesh
 import java.util.jar.Attributes
 import cga.exercise.components.geometry.VertexAttribute
@@ -8,7 +9,7 @@ import cga.exercise.components.texture.CubeTexture
 import org.lwjgl.opengl.GL11.*
 
 
-class Skybox(private val SIZE : Float = 500f, private val textures : List<String>){
+class Skybox(private val SIZE : Float = 500f, private val textures : List<String>) : IRenderable {
 
 
 private val mesh : Mesh
@@ -49,7 +50,7 @@ private val mesh : Mesh
         mesh = Mesh(VBO,IBO,VAO, material)
     }
 
-    fun render(shaderProgram: ShaderProgram){
+    override fun render(shaderProgram: ShaderProgram){
         shaderProgram.use()
         mesh.render(shaderProgram)
     }

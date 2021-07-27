@@ -1,13 +1,10 @@
 package cga.exercise.game
 
 import cga.exercise.components.camera.TronCamera
-import cga.exercise.components.geometry.Material
-import cga.exercise.components.geometry.Renderable
-import cga.exercise.components.geometry.skybox.Skybox
-import cga.exercise.components.light.PointLight
-import cga.exercise.components.light.PointLightHolder
-import cga.exercise.components.light.SpotLight
-import cga.exercise.components.light.SpotLightHolder
+import cga.exercise.components.geometry.*
+import cga.exercise.components.geometry.skybox.*
+import cga.exercise.components.geometry.gui.*
+import cga.exercise.components.light.*
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
@@ -28,6 +25,8 @@ class Scene(private val window: GameWindow) {
 
     private val mainShader: ShaderProgram = ShaderProgram("assets/shaders/main_vert.glsl", "assets/shaders/main_frag.glsl")
     private val skyBoxShader: ShaderProgram = ShaderProgram("assets/shaders/skyBox_vert.glsl", "assets/shaders/skyBox_frag.glsl")
+    private val guiShader: ShaderProgram = ShaderProgram("assets/shaders/gui_vert.glsl", "assets/shaders/gui_frag.glsl")
+
 
     private val groundRenderable : Renderable= ModelLoader.loadModel("assets/models/ground.obj",0f,0f,0f)!!
     private val sphereRenderable : Renderable= ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!
@@ -55,6 +54,11 @@ class Scene(private val window: GameWindow) {
         "assets/textures/skybox/BluePinkNebular_top.png",
         "assets/textures/skybox/BluePinkNebular_back.png",
         "assets/textures/skybox/BluePinkNebular_front.png"
+    ))
+
+    private val gui = Gui(listOf(
+        GuiElement("assets/textures/gui/UI.png"),
+        GuiElement("assets/textures/gui/Test.png", Vector2f(0.25f), Vector2f(0f,0.4f))
     ))
 
 
@@ -126,6 +130,8 @@ class Scene(private val window: GameWindow) {
 
         skyboxRenderer.render(skyBoxShader)
         camera.bind(skyBoxShader)
+
+        gui.render(guiShader)
 
     }
 

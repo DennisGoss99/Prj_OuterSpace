@@ -11,7 +11,7 @@ import java.nio.ByteBuffer
 /**
  * Created by Fabian on 16.09.2017.
  */
-class Texture2D(imageData: ByteBuffer, width: Int, height : Int, genMipMaps: Boolean): ITexture{
+open class Texture2D(imageData: ByteBuffer, width: Int, height : Int, genMipMaps: Boolean): ITexture{
     public var texID: Int = -1
         private set
 
