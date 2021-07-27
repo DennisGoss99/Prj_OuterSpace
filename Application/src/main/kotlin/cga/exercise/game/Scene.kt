@@ -12,7 +12,6 @@ import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
 import cga.framework.GameWindow
 import cga.framework.ModelLoader
-import org.joml.Math
 import org.joml.Math.toRadians
 import org.joml.Matrix4f
 import org.joml.Vector2f
@@ -26,7 +25,7 @@ import org.lwjgl.opengl.GL11.*
  */
 class Scene(private val window: GameWindow) {
 
-    private val StaticShader: ShaderProgram = ShaderProgram("assets/shaders/tron_vert.glsl", "assets/shaders/tron_frag.glsl")
+    private val MainShader: ShaderProgram = ShaderProgram("assets/shaders/main_vert.glsl", "assets/shaders/main_frag.glsl")
 
     private val groundRenderable : Renderable= ModelLoader.loadModel("assets/models/ground.obj",0f,0f,0f)!!
     private val sphereRenderable : Renderable= ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!
@@ -103,15 +102,15 @@ class Scene(private val window: GameWindow) {
 
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
-        camera.bind(StaticShader)
+        camera.bind(MainShader)
 
-        pointLightHolder.bind(StaticShader,"pointLight")
-        spotLightHolder.bind(StaticShader,"spotLight", camera.getCalculateViewMatrix())
+        pointLightHolder.bind(MainShader,"pointLight")
+        spotLightHolder.bind(MainShader,"spotLight", camera.getCalculateViewMatrix())
 
-        StaticShader.setUniform("emitColor", Vector3f(0f,0.5f,1f))
+        MainShader.setUniform("emitColor", Vector3f(0f,0.5f,1f))
 
-        sphereRenderable.render(StaticShader)
-        groundRenderable.render(StaticShader)
+        sphereRenderable.render(MainShader)
+        groundRenderable.render(MainShader)
 
 
 
