@@ -31,7 +31,8 @@ class Scene(private val window: GameWindow) {
 
 
     private val groundRenderable : Renderable= ModelLoader.loadModel("assets/models/ground.obj",0f,0f,0f)!!
-    private val sphereRenderable : Renderable= ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!
+    private val earthRenderable : Renderable= ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!
+    private val moonRenderable : Renderable= ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!
 
     private val pointLightHolder = PointLightHolder( mutableListOf(
         PointLight(Vector3f(20f,1f,20f),Vector3f(1f,0f,1f)),
@@ -49,7 +50,7 @@ class Scene(private val window: GameWindow) {
 
     var camera: TronCamera = TronCamera(modelMatrix = Matrix4f())
 
-    private var skyboxRenderer = Skybox(500.0f, listOf(
+    private var skyboxRenderer = Skybox(2000.0f, listOf(
         "assets/textures/skybox/BluePinkNebular_right.png",
         "assets/textures/skybox/BluePinkNebular_left.png",
         "assets/textures/skybox/BluePinkNebular_bottom.png",
@@ -93,7 +94,7 @@ class Scene(private val window: GameWindow) {
            m.material = material
         }
 
-        //Material Erde
+        //Material Earth
         var earthMaterial = OverlayMaterial(
                 Texture2D("assets/textures/planets/earth_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
                 Texture2D("assets/textures/planets/earth_emit.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
@@ -101,15 +102,28 @@ class Scene(private val window: GameWindow) {
                 Texture2D("assets/textures/planets/earth_clouds.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
                 64f
         )
-        sphereRenderable?.meshes.forEach { m ->
+        earthRenderable?.meshes.forEach { m ->
             m.material = earthMaterial
+        }
+
+        //Material Moon
+        var moonMaterial = Material(
+            Texture2D("assets/textures/planets/moon_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
+            Texture2D("assets/textures/planets/moon_emit.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
+            Texture2D("assets/textures/planets/moon_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
+            32f
+        )
+        moonRenderable?.meshes.forEach { m ->
+            m.material = moonMaterial
         }
 
 //        camera.translateGlobal(Vector3f(0f, 2f, 5f))
 //        camera.rotateLocal(toRadians(-35f),0f,0f)
 //
 //        sphereRenderable.scaleLocal(Vector3f(20f))
-        sphereRenderable.translateLocal(Vector3f(0f,4f,0f))
+        moonRenderable.translateLocal(Vector3f(40f,0f,0f))
+        moonRenderable.scaleLocal(Vector3f(0.27f))
+
 //        spacecraftRenderable.scaleLocal(Vector3f(0.02f))
 
 
@@ -130,8 +144,9 @@ class Scene(private val window: GameWindow) {
 
         mainShader.setUniform("emitColor", Vector3f(0f,0.5f,1f))
 
-        groundRenderable.render(mainShader)
-        sphereRenderable.render(mainShader)
+        //groundRenderable.render(mainShader)
+        earthRenderable.render(mainShader)
+        moonRenderable.render(mainShader)
 
         if(t-lastTime > 0.01f)
             mainShader.setUniform("time", t)
