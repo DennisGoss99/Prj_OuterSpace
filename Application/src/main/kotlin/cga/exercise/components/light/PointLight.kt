@@ -1,9 +1,8 @@
 package cga.exercise.components.light
 
-import cga.exercise.components.geometry.Transformable
+import cga.exercise.components.geometry.transformable.Transformable
 import cga.exercise.components.shader.ShaderProgram
 import org.joml.*
-import java.text.FieldPosition
 
 public open class PointLight(position: Vector3f, var lightColor : Vector3f, parent: Transformable? = null) : Transformable(parent = parent), IPointLight {
 

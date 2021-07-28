@@ -1,5 +1,6 @@
 package cga.exercise.components.geometry
 
+import cga.exercise.components.geometry.transformable.Transformable
 import cga.exercise.components.shader.ShaderProgram
 import org.joml.Matrix4f
 

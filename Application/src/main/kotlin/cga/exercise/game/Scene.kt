@@ -23,6 +23,7 @@ import org.lwjgl.opengl.GL11.*
  */
 class Scene(private val window: GameWindow) {
 
+    //Shader
     private val mainShader: ShaderProgram = ShaderProgram("assets/shaders/main_vert.glsl", "assets/shaders/main_frag.glsl")
     private val skyBoxShader: ShaderProgram = ShaderProgram("assets/shaders/skyBox_vert.glsl", "assets/shaders/skyBox_frag.glsl")
     private val guiShader: ShaderProgram = ShaderProgram("assets/shaders/gui_vert.glsl", "assets/shaders/gui_frag.glsl")
@@ -75,42 +76,34 @@ class Scene(private val window: GameWindow) {
         glEnable(GL_DEPTH_TEST); GLError.checkThrow()
         glDepthFunc(GL_LESS); GLError.checkThrow()
 
-
-
-
-        val diff = Texture2D("assets/textures/ground_diff.png",true)
-        val emit = Texture2D("assets/textures/ground_emit.png",true)
-        val spec = Texture2D("assets/textures/ground_spec.png",true)
-
-
-        diff.setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR)
-        emit.setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR)
-        spec.setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR)
-
-        val diff2 = Texture2D("assets/textures/planets/earth_diff.png",true)
-        val emit2 = Texture2D("assets/textures/planets/earth_emit.png",true)
-        diff2.setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR)
-        emit2.setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR)
-
-        var material2 = Material(diff2,emit2,spec,64f,Vector2f(1f))
+        //Material Boden
+        val diff = Texture2D("assets/textures/ground_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR)
+        val emit = Texture2D("assets/textures/ground_emit.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR)
+        val spec = Texture2D("assets/textures/ground_spec.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR)
 
         var material = Material(diff,emit,spec,64f,Vector2f(64f))
-
         groundRenderable?.meshes.forEach { m ->
            m.material = material
         }
 
+
+        //Material Erde
+        var earthMaterial = Material(
+                Texture2D("assets/textures/planets/earth_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
+                Texture2D("assets/textures/planets/earth_emit.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
+                spec,
+                64f
+        )
         sphereRenderable?.meshes.forEach { m ->
-            m.material = material2
+            m.material = earthMaterial
         }
 
-        camera.translateGlobal(Vector3f(0f, 2f, 5f))
-        camera.rotateLocal(toRadians(-35f),0f,0f)
-
-
-        //sphereRenderable.scaleLocal(Vector3f(20f))
-        //sphereRenderable.translateLocal(Vector3f(0f,1f,0f))
-        //spacecraftRenderable.scaleLocal(Vector3f(0.02f))
+//        camera.translateGlobal(Vector3f(0f, 2f, 5f))
+//        camera.rotateLocal(toRadians(-35f),0f,0f)
+//
+//        sphereRenderable.scaleLocal(Vector3f(20f))
+//        sphereRenderable.translateLocal(Vector3f(0f,1f,0f))
+//        spacecraftRenderable.scaleLocal(Vector3f(0.02f))
 
     }
 

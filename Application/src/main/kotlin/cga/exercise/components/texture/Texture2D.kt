@@ -60,7 +60,7 @@ open class Texture2D(imageData: ByteBuffer, width: Int, height : Int, genMipMaps
         unbind()
     }
 
-    override fun setTexParams(wrapS: Int, wrapT: Int, minFilter: Int, magFilter: Int) {
+    override fun setTexParams(wrapS: Int, wrapT: Int, minFilter: Int, magFilter: Int) : Texture2D {
 
         glBindTexture(GL_TEXTURE_2D,texID)
         glTexParameterIi(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,wrapS)
@@ -70,6 +70,8 @@ open class Texture2D(imageData: ByteBuffer, width: Int, height : Int, genMipMaps
 
         glTexParameterf(GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f)
         unbind()
+
+        return this
     }
 
     override fun bind(textureUnit: Int) {
