@@ -7,7 +7,7 @@ import org.lwjgl.opengl.GL30
 import org.lwjgl.opengl.GL30.*
 
 /**
- * Creates a Mesh object from vertexdata, intexdata and a given set of vertex attributes
+ * Creates lastTime Mesh object from vertexdata, intexdata and lastTime given set of vertex attributes
  *
  * @param vertexdata plain float array of vertex data
  * @param indexdata  index data

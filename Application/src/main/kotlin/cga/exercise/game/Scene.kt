@@ -83,11 +83,11 @@ class Scene(private val window: GameWindow) {
 
         //Material Boden
         var material = Material(
-            Texture2D("assets/textures/ground_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
+            Texture2D("assets/textures/planets/earth_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
             Texture2D("assets/textures/ground_emit.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-            Texture2D("assets/textures/ground_spec.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
+            Texture2D("assets/textures/planets/earth_spec.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
             64f,
-            Vector2f(64f))
+            Vector2f(1f))
 
         groundRenderable?.meshes.forEach { m ->
            m.material = material
@@ -109,14 +109,21 @@ class Scene(private val window: GameWindow) {
 //        camera.rotateLocal(toRadians(-35f),0f,0f)
 //
 //        sphereRenderable.scaleLocal(Vector3f(20f))
-//        sphereRenderable.translateLocal(Vector3f(0f,1f,0f))
+        sphereRenderable.translateLocal(Vector3f(0f,4f,0f))
 //        spacecraftRenderable.scaleLocal(Vector3f(0.02f))
 
+
+
     }
+
+    var lastTime = 0.5f
 
     fun render(dt: Float, t: Float) {
 
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
+
+
+
 
         pointLightHolder.bind(mainShader,"pointLight")
         spotLightHolder.bind(mainShader,"spotLight", camera.getCalculateViewMatrix())
@@ -125,6 +132,10 @@ class Scene(private val window: GameWindow) {
 
         groundRenderable.render(mainShader)
         sphereRenderable.render(mainShader)
+
+        if(t-lastTime > 0.01f)
+            mainShader.setUniform("time", t)
+
         camera.bind(mainShader)
 
 
@@ -132,6 +143,10 @@ class Scene(private val window: GameWindow) {
         camera.bind(skyBoxShader)
 
         gui.render(guiShader)
+
+
+        if(t-lastTime > 0.01f)
+            lastTime = t
 
     }
 

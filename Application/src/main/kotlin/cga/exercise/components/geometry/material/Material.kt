@@ -4,6 +4,7 @@ import cga.exercise.components.geometry.material.IMaterial
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
 import org.joml.Vector2f
+import org.lwjgl.opengl.GL30
 
 open class Material(var diff: Texture2D,
                     var emit: Texture2D,
@@ -25,6 +26,6 @@ open class Material(var diff: Texture2D,
         shaderProgram.setUniform("spec", 2)
         specular.bind(2)
 
-        shaderProgram.setUniform("overlay", 0)
+        shaderProgram.setUniform("useOverlay", 0)
     }
 }

@@ -73,7 +73,7 @@ abstract class GameWindow(
 
     //Constructors
     /**
-     * Initializes a game window object
+     * Initializes lastTime game window object
      * @param width         Desired window width
      * @param height        Desired window height
      * @param fullscreen    Fullscreen mode
@@ -82,7 +82,7 @@ abstract class GameWindow(
      * @param cvmin         Desired minor OpenGL version
      * @param title         Window title
      * @param msaasamples       Desired of multisampling samples to use when displaying the default frame buffer
-     * @param updatefrequency   Frequency the update method should be called with. 2x the expected frame rate is a good rule of thumb
+     * @param updatefrequency   Frequency the update method should be called with. 2x the expected frame rate is lastTime good rule of thumb
      */
     init {
         framebufferWidth = windowWidth
@@ -181,7 +181,7 @@ abstract class GameWindow(
         }
 
     /**
-     * Queries the state of a given key
+     * Queries the state of lastTime given key
      * @param key The GLFW key name
      * @return false, if the key is released; true, if the key is pressed
      */
@@ -232,14 +232,14 @@ abstract class GameWindow(
     protected open fun render(dt: Float, t: Float) {}
 
     /**
-     * Is called when a mouse move event occurs
+     * Is called when lastTime mouse move event occurs
      * @param xpos  screen coordinate x value
      * @param ypos  screen coordinate y value
      */
     protected open fun onMouseMove(xpos: Double, ypos: Double) {}
 
     /**
-     * Is called when a mouse button is pressed or released
+     * Is called when lastTime mouse button is pressed or released
      * @param button    GLFW mouse button name
      * @param action    GLFW action name
      * @param mode      GLFW modifiers
@@ -247,14 +247,14 @@ abstract class GameWindow(
     protected fun onMouseButton(button: Int, action: Int, mode: Int) {}
 
     /**
-     * Is called when a scroll event occurs
+     * Is called when lastTime scroll event occurs
      * @param xoffset   x offset of the mouse wheel
      * @param yoffset   y offset of the mouse wheel
      */
     protected fun onMouseScroll(xoffset: Double, yoffset: Double) {}
 
     /**
-     * Is called when a key is pressed or released
+     * Is called when lastTime key is pressed or released
      * @param key       GLFW key name
      * @param scancode  scancode of the key
      * @param action    GLFW action name

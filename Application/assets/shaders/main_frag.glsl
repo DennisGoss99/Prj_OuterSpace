@@ -43,25 +43,35 @@ uniform float shininess;
 
     uniform vec3 spotLightAttenuation;
 //
+    uniform float time;
+    uniform int useOverlay;
 
 //fragment shader output
 out vec4 color;
 
 void main(){
 
-    vec4 overlayTexture = texture(overlay, vertexData.texcoord);
-    float bendOverlayAmount = 1 - (overlayTexture.r + overlayTexture.g + overlayTexture.b) / 3 ;
+    vec4 diffTexture = texture(diff, vertexData.texcoord);
+    vec4 emitTexture = texture(emit, vertexData.texcoord);
+    vec4 specTexture = texture(spec, vertexData.texcoord);
 
-    //Set overlayTexture to its % value
-    overlayTexture = overlayTexture * (1 - bendOverlayAmount );
+    if(useOverlay == 1){
 
-    vec4 diffTexture = texture(diff, vertexData.texcoord) * bendOverlayAmount;
-    diffTexture = diffTexture + overlayTexture;
+        vec4 overlayTexture = texture(overlay, vec2(vertexData.texcoord.x + time/ 75.0f, vertexData.texcoord.y));
+        float bendOverlayAmount = 1 - (overlayTexture.r + overlayTexture.g + overlayTexture.b) / 3;
 
-    vec4 emitTexture = texture(emit, vertexData.texcoord) * bendOverlayAmount;// * vec4(emitColor,0.0f);
-    vec4 specTexture = texture(spec, vertexData.texcoord) * bendOverlayAmount;
+        //Set overlayTexture to its % value
+        overlayTexture = overlayTexture * (1 - bendOverlayAmount);
 
+        diffTexture = texture(diff, vertexData.texcoord) * bendOverlayAmount + overlayTexture;
 
+        emitTexture = texture(emit, vertexData.texcoord) * bendOverlayAmount;
+        specTexture = texture(spec, vertexData.texcoord) * bendOverlayAmount;
+
+    }
+
+    // set emmitColor
+    //emitTexture = emitTexture * vec4(emitColor,0.0f);
 
 
     // normalize everything necessary //

@@ -17,7 +17,7 @@ class OverlayMaterial(diff: Texture2D,
         shaderProgram.setUniform("overlay", 3)
         overlay.bind(3)
 
-
+        shaderProgram.setUniform("useOverlay", 1)
     }
 
 }

@@ -36,7 +36,7 @@ class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String) {
     //setUniform() functions are added later during the course
     // float vector uniforms
     /**
-     * Sets a single float uniform
+     * Sets lastTime single float uniform
      * @param name  Name of the uniform variable in the shader
      * @param value Value
      * @return returns false if the uniform was not found in the shader
@@ -115,7 +115,7 @@ class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String) {
     }
 
     /**
-     * Creates a shader object from vertex and fragment shader paths
+     * Creates lastTime shader object from vertex and fragment shader paths
      * @param vertexShaderPath      vertex shader path
      * @param fragmentShaderPath    fragment shader path
      * @throws Exception if shader compilation failed, an exception is thrown

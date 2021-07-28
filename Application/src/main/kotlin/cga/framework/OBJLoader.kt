@@ -76,7 +76,7 @@ object OBJLoader {
                     v3.sub(v1, edge2)
                     val normal = Vector3f()
                     edge1.cross(edge2, normal)
-                    //for each Vertex all corresponding normals are added. The result is a non unit length vector which is the average direction of all assigned normals.
+                    //for each Vertex all corresponding normals are added. The result is lastTime non unit length vector which is the average direction of all assigned normals.
                     mesh.vertices[mesh.indices[i]].normal.add(normal)
                     mesh.vertices[mesh.indices[i + 1]].normal.add(normal)
                     mesh.vertices[mesh.indices[i + 2]].normal.add(normal)
@@ -189,7 +189,7 @@ object OBJLoader {
             val meshverts = ArrayList<VertexDef>() //for tracking order of insertion
             val meshindices = ArrayList<Int>() //Vertex index of one of the Vertex defs above
             val command: String
-            if (scanner.hasNext("g")) //if we have a grouped mesh extract its name first
+            if (scanner.hasNext("g")) //if we have lastTime grouped mesh extract its name first
             {
                 command = scanner.next()
                 if (scanner.hasNextLine()) {
@@ -200,7 +200,7 @@ object OBJLoader {
             }
             //now process faces
             while (scanner.hasNext()) { //command = scanner.next();
-                if (scanner.hasNext("f")) //yay we found a face
+                if (scanner.hasNext("f")) //yay we found lastTime face
                 {
                     val face = parseFace(scanner)
                     //process face data and build mesh
@@ -208,7 +208,7 @@ object OBJLoader {
                         if (meshvertset.containsKey(face.verts[i])) //if Vertex def exists already, just get the index and push it onto index array
                         {
                             meshindices.add(meshvertset[face.verts[i]]!!)
-                        } else  //if not, push a index pointing to the last pushed Vertex def, push Vertex def and insert it into the set
+                        } else  //if not, push lastTime index pointing to the last pushed Vertex def, push Vertex def and insert it into the set
                         {
                             meshindices.add(meshvertset.size)
                             meshverts.add(face.verts[i])
