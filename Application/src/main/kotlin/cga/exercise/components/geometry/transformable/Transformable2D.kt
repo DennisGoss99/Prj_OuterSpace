@@ -1,10 +1,11 @@
 package cga.exercise.components.geometry.transformable
 
 import org.joml.*
+import org.joml.Math.toRadians
 
-open class Transformable2D (var modelMatrix : Matrix4f = Matrix4f(), var parent: Transformable? = null) {
+open class Transformable2D (var modelMatrix : Matrix4f = Matrix4f(), var parent: Transformable2D? = null) {
 
-    fun rotateLocal( roll: Float) = modelMatrix.rotateXYZ(0f,0f,roll);
+    fun rotateLocal( roll: Float) = modelMatrix.rotateXYZ(0f,0f,toRadians(roll));
 
     fun translateLocal(deltaPos: Vector2f){
         modelMatrix.translate(Vector3f(deltaPos,0f))

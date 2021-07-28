@@ -5,7 +5,7 @@ import cga.exercise.components.shader.ShaderProgram
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL30
 
-class Gui(var guiElement: List<GuiElement>) : IRenderable {
+class Gui(var guiElements: List<GuiElement>) : IRenderable {
 
 
 
@@ -16,7 +16,7 @@ class Gui(var guiElement: List<GuiElement>) : IRenderable {
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA,GL11.GL_ONE_MINUS_SRC_ALPHA)
         GL11.glDisable(GL11.GL_DEPTH_TEST)
 
-        guiElement.forEach { it.render(shaderProgram) }
+        guiElements.forEach { it.render(shaderProgram) }
 
         GL11.glEnable(GL11.GL_DEPTH_TEST)
         GL30.glDisable(GL11.GL_BLEND)

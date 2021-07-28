@@ -1,5 +1,6 @@
 package cga.exercise.components.geometry.transformable
 
+import org.joml.Math.toRadians
 import org.joml.Matrix4f
 import org.joml.Vector3f
 
@@ -12,7 +13,7 @@ open class Transformable(var modelMatrix: Matrix4f = Matrix4f(), var parent: Tra
      * @param yaw radiant angle around y-axis ccw
      * @param roll radiant angle around z-axis ccw
      */
-    fun rotateLocal(pitch: Float, yaw: Float, roll: Float) = modelMatrix.rotateXYZ(pitch,yaw,roll);
+    fun rotateLocal(pitch: Float, yaw: Float, roll: Float) = modelMatrix.rotateXYZ(toRadians(pitch),toRadians(yaw),toRadians(roll));
 
     /**
      * Rotates object around given rotation center.
@@ -23,7 +24,7 @@ open class Transformable(var modelMatrix: Matrix4f = Matrix4f(), var parent: Tra
      */
     fun rotateAroundPoint(pitch: Float, yaw: Float, roll: Float, altMidpoint: Vector3f) {
         val tempMatrix = Matrix4f().translate(altMidpoint)
-        tempMatrix.rotateXYZ(pitch,yaw,roll)
+        tempMatrix.rotateXYZ(toRadians(pitch),toRadians(yaw),toRadians(roll))
         tempMatrix.translate(altMidpoint.negate())
         modelMatrix = tempMatrix.mul(modelMatrix)
     }

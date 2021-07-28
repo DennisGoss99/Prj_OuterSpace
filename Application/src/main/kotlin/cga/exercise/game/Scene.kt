@@ -57,11 +57,15 @@ class Scene(private val window: GameWindow) {
         "assets/textures/skybox/BluePinkNebular_front.png"
     ))
 
+    private val planetGui = GuiElement("assets/textures/gui/Planeten.png", Vector2f(0.25f,0.25f),Vector2f(0.5f))
+
     private val gui = Gui(listOf(
         GuiElement("assets/textures/gui/UI.png"),
-        GuiElement("assets/textures/gui/Test.png", Vector2f(0.25f), Vector2f(0f,0.4f))
-    ))
-
+        GuiElement("assets/textures/gui/Test.png", Vector2f(0.25f), Vector2f(0f,0.4f)),
+        planetGui,
+        GuiElement("assets/textures/gui/Position.png", Vector2f(0.25f,0.25f), translate = Vector2f(1f), parent = planetGui)
+        )
+    )
 
     //scene setup
     init {
@@ -129,7 +133,7 @@ class Scene(private val window: GameWindow) {
     }
 
     fun update(dt: Float, t: Float) {
-        val rotationMultiplier = toRadians(45f)
+        val rotationMultiplier = 45f
         val translationMultiplier = 10.0f
 
         if (window.getKeyState(GLFW_KEY_Q)) {
@@ -175,7 +179,7 @@ class Scene(private val window: GameWindow) {
 
     fun onMouseMove(xpos: Double, ypos: Double) {
 
-        camera.rotateLocal((oldYpos-ypos).toFloat()/200.0f, (oldXpos-xpos).toFloat()/200.0f, 0f)
+        camera.rotateLocal((oldYpos-ypos).toFloat()/20.0f, (oldXpos-xpos).toFloat()/20.0f, 0f)
 
 //        camera.translateLocal(Vector3f(0f, 0f, -4f))
 //        camera.rotateAroundPoint(0f, (oldXpos-xpos).toFloat() * 0.0002f,0f, Vector3f(0f,0f,0f))

@@ -12,7 +12,7 @@ import org.lwjgl.opengl.GL30.*
 import javax.swing.Spring.scale
 
 
-class GuiElement(path : String, var scale : Vector2f = Vector2f(1f) , var translate : Vector2f  = Vector2f(0f), parent: Transformable? = null) : Transformable2D(parent = parent ){
+class GuiElement(path: String, private var scale: Vector2f = Vector2f(1f), private var translate: Vector2f  = Vector2f(0f), private var roll: Float = 0f, parent: GuiElement? = null) : Transformable2D(parent = parent ){
 
     private val mesh : Mesh
 
@@ -39,13 +39,14 @@ class GuiElement(path : String, var scale : Vector2f = Vector2f(1f) , var transl
         var material = GuiMaterial(tex)
 
         mesh = Mesh(VBO, IBO, VAO, material)
+
+        translateLocal(translate)
+        rotateLocal(roll)
+        scaleLocal(scale)
+
     }
 
     fun render(shaderProgram: ShaderProgram){
-
-        translateLocal(translate)
-        scaleLocal(scale)
-        rotateLocal(0f)
 
         shaderProgram.setUniform("transformationMatrix" , getWorldModelMatrix(),false)
         mesh.render(shaderProgram)
