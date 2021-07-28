@@ -1,9 +1,8 @@
 package cga.exercise.components.geometry
 
+import cga.exercise.components.geometry.material.IMaterial
 import cga.exercise.components.shader.ShaderProgram
 import org.lwjgl.opengl.GL15
-import org.lwjgl.opengl.GL20
-import org.lwjgl.opengl.GL20.*
 import org.lwjgl.opengl.GL30
 import org.lwjgl.opengl.GL30.*
 

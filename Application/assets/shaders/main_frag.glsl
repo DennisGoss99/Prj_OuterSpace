@@ -20,6 +20,8 @@ uniform sampler2D diff;
 uniform sampler2D emit;
 uniform sampler2D spec;
 
+uniform sampler2D overlay;
+
 uniform vec3 emitColor;
 uniform float shininess;
 
@@ -47,9 +49,20 @@ out vec4 color;
 
 void main(){
 
-    vec4 diffTexture = texture(diff, vertexData.texcoord);
-    vec4 emitTexture = texture(emit, vertexData.texcoord) * vec4(emitColor,0.0f);
-    vec4 specTexture = texture(spec, vertexData.texcoord);
+    vec4 overlayTexture = texture(overlay, vertexData.texcoord);
+    float bendOverlayAmount = 1 - (overlayTexture.r + overlayTexture.g + overlayTexture.b) / 3 ;
+
+    //Set overlayTexture to its % value
+    overlayTexture = overlayTexture * (1 - bendOverlayAmount );
+
+    vec4 diffTexture = texture(diff, vertexData.texcoord) * bendOverlayAmount;
+    diffTexture = diffTexture + overlayTexture;
+
+    vec4 emitTexture = texture(emit, vertexData.texcoord) * bendOverlayAmount;// * vec4(emitColor,0.0f);
+    vec4 specTexture = texture(spec, vertexData.texcoord) * bendOverlayAmount;
+
+
+
 
     // normalize everything necessary //
     vec3 n = normalize(vertexData.normal);
@@ -134,8 +147,7 @@ void main(){
 
 
 
-
-    color = emitTexture + diffTexture * vec4(0.5f,0.5f,0.5f, 0.0f) +  diffusePointsSum + diffuseSpotSum;
+    color = emitTexture + diffTexture * vec4(0.5f, 0.5f, 0.5f, 0.0f) +  diffusePointsSum + diffuseSpotSum;
 
 }
 

@@ -1,4 +1,4 @@
-package cga.exercise.components.geometry
+package cga.exercise.components.geometry.material
 
 import cga.exercise.components.shader.ShaderProgram
 

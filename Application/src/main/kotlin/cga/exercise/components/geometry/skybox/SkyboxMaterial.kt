@@ -1,6 +1,6 @@
 package cga.exercise.components.geometry.skybox
 
-import cga.exercise.components.geometry.IMaterial
+import cga.exercise.components.geometry.material.IMaterial
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.CubeTexture
 

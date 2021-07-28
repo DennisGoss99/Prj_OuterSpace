@@ -4,13 +4,14 @@ import cga.exercise.components.camera.TronCamera
 import cga.exercise.components.geometry.*
 import cga.exercise.components.geometry.skybox.*
 import cga.exercise.components.geometry.gui.*
+import cga.exercise.components.geometry.material.Material
+import cga.exercise.components.geometry.material.OverlayMaterial
 import cga.exercise.components.light.*
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
 import cga.framework.GameWindow
 import cga.framework.ModelLoader
-import org.joml.Math.toRadians
 import org.joml.Matrix4f
 import org.joml.Vector2f
 import org.joml.Vector3f
@@ -61,9 +62,9 @@ class Scene(private val window: GameWindow) {
 
     private val gui = Gui(listOf(
         GuiElement("assets/textures/gui/UI.png"),
-        GuiElement("assets/textures/gui/Test.png", Vector2f(0.25f), Vector2f(0f,0.4f)),
-        planetGui,
-        GuiElement("assets/textures/gui/Position.png", Vector2f(0.25f,0.25f), translate = Vector2f(1f), parent = planetGui)
+        GuiElement("assets/textures/gui/Test.png", Vector2f(0.25f), Vector2f(0f,0.4f))//,
+//        planetGui,
+//        GuiElement("assets/textures/gui/Position.png", Vector2f(0.25f,0.25f), translate = Vector2f(1f), parent = planetGui)
         )
     )
 
@@ -81,21 +82,23 @@ class Scene(private val window: GameWindow) {
         glDepthFunc(GL_LESS); GLError.checkThrow()
 
         //Material Boden
-        val diff = Texture2D("assets/textures/ground_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR)
-        val emit = Texture2D("assets/textures/ground_emit.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR)
-        val spec = Texture2D("assets/textures/ground_spec.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR)
+        var material = Material(
+            Texture2D("assets/textures/ground_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
+            Texture2D("assets/textures/ground_emit.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
+            Texture2D("assets/textures/ground_spec.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
+            64f,
+            Vector2f(64f))
 
-        var material = Material(diff,emit,spec,64f,Vector2f(64f))
         groundRenderable?.meshes.forEach { m ->
            m.material = material
         }
 
-
         //Material Erde
-        var earthMaterial = Material(
+        var earthMaterial = OverlayMaterial(
                 Texture2D("assets/textures/planets/earth_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
                 Texture2D("assets/textures/planets/earth_emit.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-                spec,
+                Texture2D("assets/textures/planets/earth_spec.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
+                Texture2D("assets/textures/planets/earth_clouds.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
                 64f
         )
         sphereRenderable?.meshes.forEach { m ->

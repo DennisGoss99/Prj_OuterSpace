@@ -1,6 +1,6 @@
 package cga.framework
 
-import cga.exercise.components.geometry.Material
+import cga.exercise.components.geometry.material.Material
 import cga.exercise.components.geometry.Mesh
 import cga.exercise.components.geometry.Renderable
 import cga.exercise.components.geometry.VertexAttribute
@@ -160,11 +160,13 @@ object ModelLoader {
         }
         // materials
         for (i in model.materials.indices) {
-            materials.add(Material(textures[model.materials[i].diffTexIndex],
+            materials.add(
+                Material(textures[model.materials[i].diffTexIndex],
                     textures[model.materials[i].emitTexIndex],
                     textures[model.materials[i].specTexIndex],
                     model.materials[i].shininess,
-                    Vector2f(1.0f, 1.0f)))
+                    Vector2f(1.0f, 1.0f))
+            )
         }
         // meshes
         for (i in model.meshes.indices) {
