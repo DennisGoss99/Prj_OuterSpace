@@ -123,7 +123,7 @@ class Scene(private val window: GameWindow) {
 
         mainShader.setUniform("emitColor", Vector3f(0f,0.5f,1f))
 
-//        groundRenderable.render(mainShader)
+        groundRenderable.render(mainShader)
         sphereRenderable.render(mainShader)
         camera.bind(mainShader)
 

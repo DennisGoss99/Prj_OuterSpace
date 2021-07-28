@@ -25,5 +25,6 @@ open class Material(var diff: Texture2D,
         shaderProgram.setUniform("spec", 2)
         specular.bind(2)
 
+        shaderProgram.setUniform("overlay", 0)
     }
 }
