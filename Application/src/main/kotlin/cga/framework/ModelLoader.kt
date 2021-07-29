@@ -1,8 +1,8 @@
 package cga.framework
 
 import cga.exercise.components.geometry.material.Material
-import cga.exercise.components.geometry.Mesh
-import cga.exercise.components.geometry.Renderable
+import cga.exercise.components.geometry.mesh.Mesh
+import cga.exercise.components.geometry.mesh.RenderableBase
 import cga.exercise.components.geometry.VertexAttribute
 import cga.exercise.components.texture.Texture2D
 import org.joml.Matrix3f
@@ -134,7 +134,7 @@ object ModelLoader {
         return data
     }
 
-    fun loadModel(objpath: String, pitch: Float, yaw: Float, roll: Float): Renderable? {
+    fun loadModel(objpath: String, pitch: Float, yaw: Float, roll: Float): RenderableBase? {
         val model = load(objpath) ?: return null
         val textures = ArrayList<Texture2D>()
         val materials = ArrayList<Material>()
@@ -170,12 +170,14 @@ object ModelLoader {
         }
         // meshes
         for (i in model.meshes.indices) {
-            meshes.add(Mesh(flattenVertexData(model.meshes[i].vertices, rot),
+            meshes.add(
+                Mesh(flattenVertexData(model.meshes[i].vertices, rot),
                     flattenIndexData(model.meshes[i].indices),
                     vertexAttributes,
-                    materials[model.meshes[i].materialIndex]))
+                    materials[model.meshes[i].materialIndex])
+            )
         }
         // assemble the renderable
-        return Renderable(meshes)
+        return RenderableBase(meshes)
     }
 }

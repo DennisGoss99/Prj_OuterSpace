@@ -1,8 +1,7 @@
 package cga.exercise.components.geometry.skybox
 
 import cga.exercise.components.geometry.IRenderable
-import cga.exercise.components.geometry.Mesh
-import java.util.jar.Attributes
+import cga.exercise.components.geometry.mesh.Mesh
 import cga.exercise.components.geometry.VertexAttribute
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.CubeTexture

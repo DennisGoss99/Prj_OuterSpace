@@ -1,5 +1,6 @@
-package cga.exercise.components.geometry
+package cga.exercise.components.geometry.mesh
 
+import cga.exercise.components.geometry.VertexAttribute
 import cga.exercise.components.geometry.material.IMaterial
 import cga.exercise.components.shader.ShaderProgram
 import org.lwjgl.opengl.GL15

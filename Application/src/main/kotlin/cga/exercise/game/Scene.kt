@@ -1,17 +1,21 @@
 package cga.exercise.game
 
 import cga.exercise.components.camera.TronCamera
-import cga.exercise.components.geometry.*
+import cga.exercise.components.geometry.RenderCategory
 import cga.exercise.components.geometry.skybox.*
 import cga.exercise.components.geometry.gui.*
 import cga.exercise.components.geometry.material.Material
 import cga.exercise.components.geometry.material.OverlayMaterial
+import cga.exercise.components.geometry.mesh.Renderable
+import cga.exercise.components.geometry.mesh.RenderableContainer
+import cga.exercise.components.geometry.transformable.Transformable
 import cga.exercise.components.light.*
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
 import cga.framework.GameWindow
 import cga.framework.ModelLoader
+import org.joml.Math.toRadians
 import org.joml.Matrix4f
 import org.joml.Vector2f
 import org.joml.Vector3f
@@ -29,13 +33,16 @@ class Scene(private val window: GameWindow) {
     private val skyBoxShader: ShaderProgram = ShaderProgram("assets/shaders/skyBox_vert.glsl", "assets/shaders/skyBox_frag.glsl")
     private val guiShader: ShaderProgram = ShaderProgram("assets/shaders/gui_vert.glsl", "assets/shaders/gui_frag.glsl")
 
+    private val renderAlways = listOf(RenderCategory.FirstPerson,RenderCategory.ThirdPerson)
+    private val renderFirstPerson = listOf(RenderCategory.FirstPerson)
+    private val renderThirdPerson = listOf(RenderCategory.ThirdPerson)
 
-    private val groundRenderable : Renderable= ModelLoader.loadModel("assets/models/ground.obj",0f,0f,0f)!!
-    private val earthRenderable : Renderable= ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!
-    private val moonRenderable : Renderable= ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!
-
-    private val shipRederable : Renderable= ModelLoader.loadModel("assets/models/spaceShip/spaceShip.obj",0f,0f,0f)!!
-
+    private val renderables = RenderableContainer( hashMapOf(
+        //"ground" to ModelLoader.loadModel("assets/models/ground.obj",0f,0f,0f)!!,
+        "earth" to Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!),
+        "moon" to Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!),
+        "spaceShip" to Renderable( renderThirdPerson ,ModelLoader.loadModel("assets/models/spaceShip/spaceShip.obj",0f,toRadians(180f),0f)!!)
+    ))
 
     private val pointLightHolder = PointLightHolder( mutableListOf(
         PointLight(Vector3f(20f,1f,20f),Vector3f(1f,0f,1f)),
@@ -50,6 +57,8 @@ class Scene(private val window: GameWindow) {
         SpotLight(Vector3f(0f,1f,0f),Vector3f(1f,1f,0.6f),  30f, 90f )
     ))
 
+    // camera
+    var cameraMode = RenderCategory.FirstPerson
 
     var camera: TronCamera = TronCamera(modelMatrix = Matrix4f())
 
@@ -62,18 +71,19 @@ class Scene(private val window: GameWindow) {
         "assets/textures/skybox/BluePinkNebular_front.png"
     ))
 
-    private val planetGui = GuiElement("assets/textures/gui/Planeten.png", Vector2f(0.25f,0.25f),Vector2f(0.5f))
+    private val planetGui = GuiElement("assets/textures/gui/Planeten.png" ,emptyList(), Vector2f(0.25f,0.25f),Vector2f(0.5f))
 
-    private val gui = Gui(listOf(
-        GuiElement("assets/textures/gui/UI.png"),
-        GuiElement("assets/textures/gui/Test.png", Vector2f(0.25f), Vector2f(0f,0.4f))//,
-//        planetGui,
-//        GuiElement("assets/textures/gui/Position.png", Vector2f(0.25f,0.25f), translate = Vector2f(1f), parent = planetGui)
-        )
-    )
+    private val gui = Gui( hashMapOf(
+        "marker" to GuiElement("assets/textures/gui/Position.png", emptyList(), Vector2f(0.25f,0.25f), translate = Vector2f(1f), parent = planetGui),
+        "cockpit" to GuiElement("assets/textures/gui/UI.png", renderFirstPerson),
+        "outerSpace" to GuiElement("assets/textures/gui/Test.png", renderAlways, Vector2f(0.25f), Vector2f(0f,0.4f)),
+        "planets" to planetGui
+    ))
 
     //scene setup
     init {
+
+        println(gui.keys)
 
         //initial opengl state
         glClearColor(0f, 0f, 0f, 1.0f); GLError.checkThrow()
@@ -93,8 +103,8 @@ class Scene(private val window: GameWindow) {
             64f,
             Vector2f(1f))
 
-        groundRenderable?.meshes.forEach { m ->
-           m.material = material
+        renderables["ground"]?.meshes?.forEach { m ->
+            m.material = material
         }
 
         //Material Earth
@@ -105,7 +115,7 @@ class Scene(private val window: GameWindow) {
                 Texture2D("assets/textures/planets/earth_clouds.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
                 64f
         )
-        earthRenderable?.meshes.forEach { m ->
+        renderables["earth"]?.meshes?.forEach { m ->
             m.material = earthMaterial
         }
 
@@ -116,7 +126,7 @@ class Scene(private val window: GameWindow) {
             Texture2D("assets/textures/planets/moon_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
             32f
         )
-        moonRenderable?.meshes.forEach { m ->
+        renderables["moon"]?.meshes?.forEach { m ->
             m.material = moonMaterial
         }
 
@@ -124,8 +134,8 @@ class Scene(private val window: GameWindow) {
 //        camera.rotateLocal(toRadians(-35f),0f,0f)
 //
 //        sphereRenderable.scaleLocal(Vector3f(20f))
-        moonRenderable.translateLocal(Vector3f(40f,0f,0f))
-        moonRenderable.scaleLocal(Vector3f(0.27f))
+        renderables["moon"]?.translateLocal(Vector3f(40f,0f,0f))
+        renderables["moon"]?.scaleLocal(Vector3f(0.27f))
 
 //        spacecraftRenderable.scaleLocal(Vector3f(0.02f))
 
@@ -147,10 +157,8 @@ class Scene(private val window: GameWindow) {
 
         mainShader.setUniform("emitColor", Vector3f(0f,0.5f,1f))
 
-        //groundRenderable.render(mainShader)
-        //earthRenderable.render(mainShader)
-        moonRenderable.render(mainShader)
-        shipRederable.render(mainShader)
+        renderables.render(cameraMode, mainShader)
+
         if(t-lastTime > 0.01f)
             mainShader.setUniform("time", t)
 
@@ -160,7 +168,7 @@ class Scene(private val window: GameWindow) {
         skyboxRenderer.render(skyBoxShader)
         camera.bind(skyBoxShader)
 
-        gui.render(guiShader)
+        gui.render(cameraMode, guiShader)
 
 
         if(t-lastTime > 0.01f)
@@ -168,59 +176,92 @@ class Scene(private val window: GameWindow) {
 
     }
 
+    var movingObject : Transformable = camera
+
     fun update(dt: Float, t: Float) {
         val rotationMultiplier = 45f
         val translationMultiplier = 10.0f
 
         if (window.getKeyState(GLFW_KEY_Q)) {
-            camera.translateLocal(Vector3f(0.0f, translationMultiplier * dt,0.0f ))
+            movingObject.translateLocal(Vector3f(0.0f, translationMultiplier * dt,0.0f ))
         }
         if (window.getKeyState(GLFW_KEY_E)) {
-            camera.translateLocal(Vector3f(0.0f, -translationMultiplier * dt,0.0f ))
+            movingObject.translateLocal(Vector3f(0.0f, -translationMultiplier * dt,0.0f ))
         }
 
 
         if (window.getKeyState ( GLFW_KEY_W)) {
-            camera.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt))
+            movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt))
         }
 
         if (window.getKeyState ( GLFW_KEY_S)) {
-            camera.translateLocal(Vector3f(0.0f, 0.0f, translationMultiplier * dt))
+            movingObject.translateLocal(Vector3f(0.0f, 0.0f, translationMultiplier * dt))
         }
 
         if (window.getKeyState ( GLFW_KEY_G)) {
-            camera.translateLocal(Vector3f(0.0f, 0.0f, translationMultiplier * dt * 100))
+            movingObject.translateLocal(Vector3f(0.0f, 0.0f, translationMultiplier * dt * 100))
         }
 
         if (window.getKeyState ( GLFW_KEY_T)) {
-            camera.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt * 100))
+            movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt * 100))
         }
 
 
         if (window.getKeyState ( GLFW_KEY_A)) {
-            camera.rotateLocal(0.0f, 0.0f, rotationMultiplier* dt)
+            movingObject.rotateLocal(0.0f, 0.0f, rotationMultiplier* dt)
         }
 
         if (window.getKeyState ( GLFW_KEY_D)) {
-            camera.rotateLocal(0.0f, 0.0f, -rotationMultiplier* dt)
+            movingObject.rotateLocal(0.0f, 0.0f, -rotationMultiplier* dt)
         }
 
 
     }
 
-    fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {}
+    fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
 
-    var oldXpos : Double = 0.0;
-    var oldYpos : Double = 0.0;
+        if(GLFW_KEY_F5 == key && action == 0){
+
+            when(cameraMode){
+
+                RenderCategory.FirstPerson ->{
+                    renderables["spaceShip"]!!.modelMatrix = camera.modelMatrix
+                    camera.parent = renderables["spaceShip"]
+                    camera.modelMatrix = Matrix4f()
+                    camera.translateGlobal(Vector3f(0f, 6f, 14f))
+                    camera.rotateLocal(-40f,0f,0f)
+                    movingObject = renderables["spaceShip"]!!
+                    cameraMode = RenderCategory.ThirdPerson
+                }
+                RenderCategory.ThirdPerson -> {
+                    camera.parent = null
+                    camera.modelMatrix = renderables["spaceShip"]!!.getWorldModelMatrix()
+                    movingObject = camera
+                    cameraMode = RenderCategory.FirstPerson
+                }
+            }
+
+        }
+    }
+
+
+    var oldXpos : Double = 0.0
+    var oldYpos : Double = 0.0
 
     fun onMouseMove(xpos: Double, ypos: Double) {
 
-        camera.rotateLocal((oldYpos-ypos).toFloat()/20.0f, (oldXpos-xpos).toFloat()/20.0f, 0f)
+        when(cameraMode){
 
-//        camera.translateLocal(Vector3f(0f, 0f, -4f))
-//        camera.rotateAroundPoint(0f, (oldXpos-xpos).toFloat() * 0.0002f,0f, Vector3f(0f,0f,0f))
-//        camera.translateLocal(Vector3f(0f, 0f, 4f))
-//
+            RenderCategory.FirstPerson ->{
+                camera.rotateLocal((oldYpos-ypos).toFloat()/20.0f, (oldXpos-xpos).toFloat()/20.0f, 0f)
+            }
+            RenderCategory.ThirdPerson -> {
+                camera.translateLocal(Vector3f(0f, 0f, -4f))
+                camera.rotateAroundPoint(0f, (oldXpos-xpos).toFloat() * 0.02f,0f, Vector3f(0f,0f,0f))
+                camera.translateLocal(Vector3f(0f, 0f, 4f))
+            }
+        }
+
         oldXpos = xpos
         oldYpos = ypos
     }

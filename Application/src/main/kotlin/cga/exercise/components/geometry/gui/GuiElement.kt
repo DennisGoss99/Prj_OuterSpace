@@ -1,18 +1,21 @@
 package cga.exercise.components.geometry.gui
 
-import cga.exercise.components.geometry.Mesh
+import cga.exercise.components.geometry.RenderCategory
+import cga.exercise.components.geometry.mesh.Mesh
 import cga.exercise.components.geometry.VertexAttribute
-import cga.exercise.components.geometry.transformable.Transformable
 import cga.exercise.components.geometry.transformable.Transformable2D
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
 import org.joml.*
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL30.*
-import javax.swing.Spring.scale
 
 
-class GuiElement(path: String, private var scale: Vector2f = Vector2f(1f), private var translate: Vector2f  = Vector2f(0f), private var roll: Float = 0f, parent: GuiElement? = null) : Transformable2D(parent = parent ){
+class GuiElement(path: String,
+                 val shouldRender : List<RenderCategory>,
+                 private var scale: Vector2f = Vector2f(1f),
+                 private var translate: Vector2f  = Vector2f(0f),
+                 private var roll: Float = 0f, parent: GuiElement? = null) : Transformable2D(parent = parent ){
 
     private val mesh : Mesh
 
