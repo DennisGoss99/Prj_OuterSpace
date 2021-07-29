@@ -34,6 +34,9 @@ class Scene(private val window: GameWindow) {
     private val earthRenderable : Renderable= ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!
     private val moonRenderable : Renderable= ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!
 
+    private val testRenderable : Renderable= ModelLoader.loadModel("C:/Users/Merdo/Desktop/space ship .obj",0f,0f,0f)!!
+
+
     private val pointLightHolder = PointLightHolder( mutableListOf(
         PointLight(Vector3f(20f,1f,20f),Vector3f(1f,0f,1f)),
         PointLight(Vector3f(-20f,1f,20f),Vector3f(1f,0f,1f)),
@@ -145,9 +148,9 @@ class Scene(private val window: GameWindow) {
         mainShader.setUniform("emitColor", Vector3f(0f,0.5f,1f))
 
         //groundRenderable.render(mainShader)
-        earthRenderable.render(mainShader)
+        //earthRenderable.render(mainShader)
         moonRenderable.render(mainShader)
-
+        testRenderable.render(mainShader)
         if(t-lastTime > 0.01f)
             mainShader.setUniform("time", t)
 
