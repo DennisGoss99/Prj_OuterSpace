@@ -4,12 +4,12 @@
 in vec2 textureCoords;
 
 uniform sampler2D texture2D;
-uniform vec3 textureColor;
+uniform vec4 textureColor;
 out vec4 color;
 
 
 void main(void){
 
-    color = normalize(texture(texture2D, textureCoords) * vec4(textureColor, 1.0f));
+    color = normalize(texture(texture2D, textureCoords) * textureColor);
 
 }

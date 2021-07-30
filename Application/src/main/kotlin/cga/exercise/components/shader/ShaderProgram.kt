@@ -64,6 +64,16 @@ class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String) {
         return false
     }
 
+    fun setUniform(name: String, value: Vector4f): Boolean {
+        if (programID == 0) return false
+        val loc = GL20.glGetUniformLocation(programID, name)
+        if (loc != -1) {
+            GL20.glUniform4f(loc, value.x, value.y, value.z, value.w)
+            return true
+        }
+        return false
+    }
+
     fun setUniform(name: String, value: Vector3f): Boolean {
         if (programID == 0) return false
         val loc = GL20.glGetUniformLocation(programID, name)
