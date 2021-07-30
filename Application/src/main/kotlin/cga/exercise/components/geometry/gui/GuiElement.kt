@@ -3,13 +3,12 @@ package cga.exercise.components.geometry.gui
 import cga.exercise.components.geometry.RenderCategory
 import cga.exercise.components.geometry.mesh.Mesh
 import cga.exercise.components.geometry.VertexAttribute
+import cga.exercise.components.geometry.material.SimpleMaterial
 import cga.exercise.components.geometry.transformable.Transformable2D
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
 import org.joml.*
 import org.lwjgl.opengl.GL11
-import org.lwjgl.opengl.GL15
-import org.lwjgl.opengl.GL30
 import org.lwjgl.opengl.GL30.*
 
 
@@ -42,7 +41,7 @@ class GuiElement(path: String,
         tex = Texture2D(path,false).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR)
 
 
-        var material = GuiMaterial(tex)
+        var material = SimpleMaterial(tex)
 
         mesh = Mesh(VBO, IBO, VAO, material)
 

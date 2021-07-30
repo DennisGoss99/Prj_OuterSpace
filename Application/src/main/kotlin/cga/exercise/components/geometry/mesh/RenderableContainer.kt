@@ -13,4 +13,8 @@ class RenderableContainer(renderables : HashMap< String ,Renderable>) : HashMap<
         }
     }
 
+    override fun cleanup() {
+        super.entries.forEach { it.value.cleanup()}
+    }
+
 }

@@ -2,10 +2,14 @@ package cga.exercise.game
 
 import cga.exercise.components.camera.TronCamera
 import cga.exercise.components.geometry.RenderCategory
+import cga.exercise.components.geometry.atmosphere.Atmosphere
+import cga.exercise.components.geometry.atmosphere.AtmosphereMaterial
+import cga.exercise.components.geometry.atmosphere.atmospherePerspective
 import cga.exercise.components.geometry.skybox.*
 import cga.exercise.components.geometry.gui.*
 import cga.exercise.components.geometry.material.Material
 import cga.exercise.components.geometry.material.OverlayMaterial
+import cga.exercise.components.geometry.material.SimpleMaterial
 import cga.exercise.components.geometry.mesh.Renderable
 import cga.exercise.components.geometry.mesh.RenderableContainer
 import cga.exercise.components.geometry.transformable.Transformable
@@ -32,6 +36,7 @@ class Scene(private val window: GameWindow) {
     private val mainShader: ShaderProgram = ShaderProgram("assets/shaders/main_vert.glsl", "assets/shaders/main_frag.glsl")
     private val skyBoxShader: ShaderProgram = ShaderProgram("assets/shaders/skyBox_vert.glsl", "assets/shaders/skyBox_frag.glsl")
     private val guiShader: ShaderProgram = ShaderProgram("assets/shaders/gui_vert.glsl", "assets/shaders/gui_frag.glsl")
+    private val atmosphereShader: ShaderProgram = ShaderProgram("assets/shaders/atmosphere_vert.glsl", "assets/shaders/atmosphere_frag.glsl")
 
     private val renderAlways = listOf(RenderCategory.FirstPerson,RenderCategory.ThirdPerson)
     private val renderFirstPerson = listOf(RenderCategory.FirstPerson)
@@ -43,6 +48,8 @@ class Scene(private val window: GameWindow) {
         "moon" to Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!),
         "spaceShip" to Renderable( renderThirdPerson ,ModelLoader.loadModel("assets/models/spaceShip/spaceShip.obj",0f,toRadians(180f),0f)!!)
     ))
+
+    private val earthAtmosphere = Atmosphere(renderAlways, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true),Vector3f(0.2f,0.6f,1.0f)),renderables["earth"])
 
     private val pointLightHolder = PointLightHolder( mutableListOf(
         PointLight(Vector3f(20f,1f,20f),Vector3f(1f,0f,1f)),
@@ -128,16 +135,10 @@ class Scene(private val window: GameWindow) {
             m.material = moonMaterial
         }
 
-//        camera.translateGlobal(Vector3f(0f, 2f, 5f))
-//        camera.rotateLocal(toRadians(-35f),0f,0f)
-//
-//        sphereRenderable.scaleLocal(Vector3f(20f))
         renderables["moon"]?.translateLocal(Vector3f(40f,0f,0f))
         renderables["moon"]?.scaleLocal(Vector3f(0.27f))
 
-//        spacecraftRenderable.scaleLocal(Vector3f(0.02f))
-
-
+        earthAtmosphere.scaleLocal(Vector3f(22f))
 
     }
 
@@ -156,13 +157,23 @@ class Scene(private val window: GameWindow) {
         if(t-lastTime > 0.01f)
             mainShader.setUniform("time", t)
 
-        camera.bind(mainShader)
+        camera.bind(mainShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
         renderables.render(cameraMode, mainShader)
         //--
 
+
+
+
         //-- SkyBoxShader
+
+        SkyboxPerspective.bind(skyBoxShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
         skyboxRenderer.render(skyBoxShader)
-        camera.bind(skyBoxShader)
+        //--
+
+        //-- AtmosphereShader
+
+        atmospherePerspective.bind(atmosphereShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
+        earthAtmosphere.render(atmosphereShader)
         //--
 
         //-- GuiShader
@@ -252,6 +263,7 @@ class Scene(private val window: GameWindow) {
 
             RenderCategory.FirstPerson ->{
                 camera.rotateLocal((oldYpos-ypos).toFloat()/20.0f, (oldXpos-xpos).toFloat()/20.0f, 0f)
+
             }
             RenderCategory.ThirdPerson -> {
                 camera.translateLocal(Vector3f(0f, 0f, -4f))
@@ -267,12 +279,8 @@ class Scene(private val window: GameWindow) {
 
     fun cleanup() {
 
-        renderables.forEach{
-            it.value.meshes.forEach { m-> m.cleanup() }
-        }
-        gui.forEach{
-            it.value.cleanup()
-        }
+        renderables.cleanup()
+        gui.cleanup()
 
         mainShader.cleanup()
         guiShader.cleanup()

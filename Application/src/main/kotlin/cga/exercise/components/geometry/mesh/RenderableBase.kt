@@ -14,4 +14,8 @@ open class RenderableBase(var meshes: MutableList<Mesh>, modelMatrix: Matrix4f =
         shaderProgram.setUniform("model_matrix" , getWorldModelMatrix(),false)
         meshes.forEach { m -> m.render(shaderProgram) }
     }
+
+    override fun cleanup() {
+        meshes.forEach { it.cleanup() }
+    }
 }

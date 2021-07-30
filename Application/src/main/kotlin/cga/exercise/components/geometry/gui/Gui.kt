@@ -21,13 +21,17 @@ class Gui(guiElements: HashMap< String , GuiElement>) : HashMap< String , GuiEle
 
         super.entries.forEach {
             if(it.value.shouldRender.contains(cameraMode))
-            it.value.render(shaderProgram)
+                it.value.render(shaderProgram)
         }
 
         GL11.glEnable(GL11.GL_DEPTH_TEST)
         GL30.glDisable(GL11.GL_BLEND)
 
 
+    }
+
+    override fun cleanup() {
+        super.entries.forEach { it.value.cleanup() }
     }
 
 

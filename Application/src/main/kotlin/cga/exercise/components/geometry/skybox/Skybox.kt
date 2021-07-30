@@ -54,6 +54,10 @@ private val mesh : Mesh
         mesh.render(shaderProgram)
     }
 
+    override fun cleanup() {
+        mesh.cleanup()
+    }
+
 
 }
 
