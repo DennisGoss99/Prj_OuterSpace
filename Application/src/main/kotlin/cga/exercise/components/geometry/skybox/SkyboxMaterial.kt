@@ -11,4 +11,8 @@ class SkyboxMaterial(private val cubeTexture: CubeTexture) : IMaterial {
         cubeTexture.bind(0)
     }
 
+    override fun cleanup() {
+        cubeTexture.cleanup()
+    }
+
 }

@@ -82,9 +82,7 @@ class Scene(private val window: GameWindow) {
 
     //scene setup
     init {
-
-        println(gui.keys)
-
+        
         //initial opengl state
         glClearColor(0f, 0f, 0f, 1.0f); GLError.checkThrow()
 
@@ -149,27 +147,27 @@ class Scene(private val window: GameWindow) {
 
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
-
-
-
+        //-- main Shader
         pointLightHolder.bind(mainShader,"pointLight")
         spotLightHolder.bind(mainShader,"spotLight", camera.getCalculateViewMatrix())
 
         mainShader.setUniform("emitColor", Vector3f(0f,0.5f,1f))
 
-        renderables.render(cameraMode, mainShader)
-
         if(t-lastTime > 0.01f)
             mainShader.setUniform("time", t)
 
         camera.bind(mainShader)
+        renderables.render(cameraMode, mainShader)
+        //--
 
-
+        //-- SkyBoxShader
         skyboxRenderer.render(skyBoxShader)
         camera.bind(skyBoxShader)
+        //--
 
+        //-- GuiShader
         gui.render(cameraMode, guiShader)
-
+        //--
 
         if(t-lastTime > 0.01f)
             lastTime = t
@@ -267,5 +265,17 @@ class Scene(private val window: GameWindow) {
     }
 
 
-    fun cleanup() {}
+    fun cleanup() {
+
+        renderables.forEach{
+            it.value.meshes.forEach { m-> m.cleanup() }
+        }
+        gui.forEach{
+            it.value.cleanup()
+        }
+
+        mainShader.cleanup()
+        guiShader.cleanup()
+        skyBoxShader.cleanup()
+    }
 }

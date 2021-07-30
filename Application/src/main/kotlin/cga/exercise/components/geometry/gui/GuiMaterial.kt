@@ -11,4 +11,8 @@ class GuiMaterial (private val texture: Texture2D) : IMaterial {
         texture.bind(0)
     }
 
+    override fun cleanup() {
+        texture.cleanup()
+    }
+
 }

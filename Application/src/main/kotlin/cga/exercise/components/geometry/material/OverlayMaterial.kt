@@ -20,4 +20,9 @@ class OverlayMaterial(diff: Texture2D,
         shaderProgram.setUniform("useOverlay", 1)
     }
 
+    override fun cleanup() {
+        super.cleanup()
+        overlay.cleanup()
+    }
+
 }

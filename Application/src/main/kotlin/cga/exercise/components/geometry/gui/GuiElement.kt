@@ -8,6 +8,8 @@ import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
 import org.joml.*
 import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL15
+import org.lwjgl.opengl.GL30
 import org.lwjgl.opengl.GL30.*
 
 
@@ -18,6 +20,7 @@ class GuiElement(path: String,
                  private var roll: Float = 0f, parent: GuiElement? = null) : Transformable2D(parent = parent ){
 
     private val mesh : Mesh
+    private var tex : Texture2D
 
     init{
 
@@ -36,7 +39,7 @@ class GuiElement(path: String,
             0, 1, 2
         )
 
-        var tex = Texture2D(path,false).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR)
+        tex = Texture2D(path,false).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR)
 
 
         var material = GuiMaterial(tex)
@@ -55,5 +58,11 @@ class GuiElement(path: String,
         mesh.render(shaderProgram)
     }
 
+    /**
+     * Deletes the previously allocated OpenGL objects for this mesh
+     */
+    fun cleanup() {
+        mesh.cleanup()
+    }
 
 }

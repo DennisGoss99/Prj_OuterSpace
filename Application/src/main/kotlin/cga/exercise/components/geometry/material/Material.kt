@@ -28,4 +28,10 @@ open class Material(var diff: Texture2D,
 
         shaderProgram.setUniform("useOverlay", 0)
     }
+
+    override fun cleanup() {
+        diff.cleanup()
+        emit.cleanup()
+        specular.cleanup()
+    }
 }
