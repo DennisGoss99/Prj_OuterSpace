@@ -6,7 +6,7 @@ import cga.exercise.components.shader.ShaderProgram
 import org.joml.Math.toRadians
 import org.joml.Matrix4f
 
-class TronCamera(
+open class Camera(
     val FieldofView: Float = 90f,
     val AspectRatio : Float = 16f/9f,
     val NearPlane: Float = 0.1f, val
