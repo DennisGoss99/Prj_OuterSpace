@@ -49,7 +49,8 @@ class Scene(private val window: GameWindow) {
         "earth" to Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!),
         "moon" to Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!),
         "mars" to Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!),
-        "spaceShip" to Renderable( renderThirdPerson ,ModelLoader.loadModel("assets/models/spaceShip/spaceShip.obj",0f,toRadians(180f),0f)!!)
+        "spaceShip" to Renderable( renderThirdPerson ,ModelLoader.loadModel("assets/models/spaceShip/spaceShip.obj",0f,toRadians(180f),0f)!!),
+        "spaceShipInside" to Renderable( renderFirstPerson ,ModelLoader.loadModel("assets/models/SpaceshipInside/spaceshipInside.obj",0f,toRadians(-90f),toRadians(0f))!!)
     ))
 
     private val earthAtmosphere = Atmosphere(renderAlways, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(0.2f,0.6f,1.0f, 0.9f)),renderables["earth"])
@@ -91,8 +92,8 @@ class Scene(private val window: GameWindow) {
 
     private val gui = Gui( hashMapOf(
         "marker" to GuiElement("assets/textures/gui/Position.png", emptyList(), Vector2f(0.25f,0.25f), translate = Vector2f(1f), parent = planetGui),
-        "cockpit" to GuiElement("assets/textures/gui/UI.png", renderFirstPerson),
-        "outerSpace" to GuiElement("assets/textures/gui/Test.png", renderFirstPerson, Vector2f(0.25f), Vector2f(0f,0.4f)),
+        //"cockpit" to GuiElement("assets/textures/gui/UI.png", renderFirstPerson),
+        "outerSpace" to GuiElement("assets/textures/gui/Test.png", renderFirstPerson, Vector2f(0.20f), Vector2f(0f,0.4f)),
         "planets" to planetGui
     ))
 
@@ -117,6 +118,9 @@ class Scene(private val window: GameWindow) {
                 firstPersonCamera.parent = null
                 firstPersonCamera.modelMatrix = renderables["spaceShip"]!!.getWorldModelMatrix()
 
+                renderables["spaceShipInside"]!!.parent = firstPersonCamera
+                renderables["spaceShipInside"]!!.translateLocal(Vector3f(0f,-5f,-12f))
+                renderables["spaceShipInside"]!!.rotateLocal(5f,0f,0f)
 
             // thirdPersonCamera
                 renderables["spaceShip"]!!.modelMatrix = thirdPersonCamera.modelMatrix
