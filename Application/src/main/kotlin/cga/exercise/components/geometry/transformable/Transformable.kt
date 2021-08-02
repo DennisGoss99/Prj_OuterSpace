@@ -24,7 +24,7 @@ open class Transformable(var modelMatrix: Matrix4f = Matrix4f(), var parent: Tra
      */
     fun rotateAroundPoint(pitch: Float, yaw: Float, roll: Float, altMidpoint: Vector3f) {
         val tempMatrix = Matrix4f().translate(altMidpoint)
-        tempMatrix.rotateXYZ(toRadians(pitch),toRadians(yaw),toRadians(roll))
+        tempMatrix.rotateXYZ(pitch,yaw,roll)
         tempMatrix.translate(altMidpoint.negate())
         modelMatrix = tempMatrix.mul(modelMatrix)
     }
