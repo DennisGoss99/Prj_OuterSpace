@@ -5,18 +5,15 @@ import cga.exercise.components.camera.Camera
 import cga.exercise.components.camera.FirstPersonCamera
 import cga.exercise.components.camera.ThirdPersonCamera
 import cga.exercise.components.geometry.RenderCategory
-import cga.exercise.components.geometry.atmosphere.Atmosphere
-import cga.exercise.components.geometry.atmosphere.AtmosphereMaterial
-import cga.exercise.components.geometry.atmosphere.atmospherePerspective
+import cga.exercise.components.geometry.atmosphere.*
 import cga.exercise.components.geometry.skybox.*
 import cga.exercise.components.geometry.gui.*
-import cga.exercise.components.geometry.material.Material
-import cga.exercise.components.geometry.material.OverlayMaterial
-import cga.exercise.components.geometry.mesh.Renderable
-import cga.exercise.components.geometry.mesh.RenderableContainer
+import cga.exercise.components.geometry.material.*
+import cga.exercise.components.geometry.mesh.*
 import cga.exercise.components.geometry.transformable.Transformable
 import cga.exercise.components.light.*
 import cga.exercise.components.shader.ShaderProgram
+import cga.exercise.components.spaceObjects.*
 import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
 import cga.framework.GameWindow
@@ -47,11 +44,17 @@ class Scene(private val window: GameWindow) {
     private val renderables = RenderableContainer( hashMapOf(
         //"ground" to ModelLoader.loadModel("assets/models/ground.obj",0f,0f,0f)!!,
         "earth" to Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!),
-        "moon" to Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!),
+//        "moon" to Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!),
         "mars" to Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!),
         "spaceShip" to Renderable( renderThirdPerson ,ModelLoader.loadModel("assets/models/spaceShip/spaceShip.obj",0f,toRadians(180f),0f)!!),
         "spaceShipInside" to Renderable( renderFirstPerson ,ModelLoader.loadModel("assets/models/SpaceshipInside/spaceshipInside.obj",0f,toRadians(-90f),toRadians(0f))!!)
     ))
+
+    private val spaceObjects = listOf(
+        Moon(80f,10f,0f,Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!)),
+        Moon(70f,10f,360f,Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
+    )
+
 
     private val earthAtmosphere = Atmosphere(renderAlways, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(0.2f,0.6f,1.0f, 0.9f)),renderables["earth"])
     private val marsAtmosphere = Atmosphere(renderAlways, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(208,105,70, 50)),renderables["mars"])
@@ -131,6 +134,8 @@ class Scene(private val window: GameWindow) {
         //--
 
 
+
+
         //Material Boden
         var material = Material(
             Texture2D("assets/textures/planets/earth_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
@@ -173,12 +178,16 @@ class Scene(private val window: GameWindow) {
             Texture2D("assets/textures/planets/moon_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
             32f
         )
-        renderables["moon"]?.meshes?.forEach { m ->
+        spaceObjects[0]?.meshes?.forEach { m ->
+            m.material = moonMaterial
+        }
+        spaceObjects[1]?.meshes?.forEach { m ->
             m.material = moonMaterial
         }
 
-        renderables["moon"]?.translateLocal(Vector3f(40f,0f,0f))
-        renderables["moon"]?.scaleLocal(Vector3f(0.27f))
+        spaceObjects[0]?.scaleLocal(Vector3f(0.27f))
+        spaceObjects[1]?.scaleLocal(Vector3f(0.27f))
+
 
         earthAtmosphere.scaleLocal(Vector3f(22f))
 
@@ -205,6 +214,7 @@ class Scene(private val window: GameWindow) {
 
         camera.bind(mainShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
         renderables.render(cameraMode, mainShader)
+        spaceObjects.forEach { it.render(mainShader) }
         //--
 
 
@@ -235,6 +245,10 @@ class Scene(private val window: GameWindow) {
 
 
     fun update(dt: Float, t: Float) {
+
+        //renderables["moon"]?.rotateAroundPoint( 0f,0f,1f ,Vector3f(0f,0f,0f))
+        spaceObjects.forEach { it.orbit() }
+
         val rotationMultiplier = 30f
         val translationMultiplier = 10.0f
 
