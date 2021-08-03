@@ -12,7 +12,6 @@ class Sun(size: Float,
           rotationAngle : Float,
           selfRotation : Vector3f,
           material : IMaterial,
-          atmosphere: Atmosphere? = null,
           orbitAround: Transformable? = null,
           renderable : RenderableBase
-) : SpaceObject(size, distanceToParent, speed, rotationAngle, selfRotation, material, atmosphere, orbitAround, renderable)
+) : SpaceObject(size, distanceToParent, speed, rotationAngle, selfRotation, material, orbitAround, renderable)

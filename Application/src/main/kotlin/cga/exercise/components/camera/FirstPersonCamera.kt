@@ -6,7 +6,7 @@ import org.joml.Matrix4f
 class FirstPersonCamera(
     FieldofView: Float = 90f,
     AspectRatio: Float = 16f / 9f,
-    NearPlane: Float = 0.1f,
+    NearPlane: Float = 1f,
     FarPlane: Float = 4000f,
     modelMatrix: Matrix4f = Matrix4f(),
     parent: Transformable? = null

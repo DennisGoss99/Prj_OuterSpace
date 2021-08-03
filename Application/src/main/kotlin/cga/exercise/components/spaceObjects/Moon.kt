@@ -13,4 +13,4 @@ class Moon(size: Float,
            material : IMaterial,
            orbitAround: Transformable? = null,
            renderable : RenderableBase
-) : SpaceObject(size, distanceToParent, speed, rotationAngle, selfRotation, material, null, orbitAround, renderable)
+) : SpaceObject(size, distanceToParent, speed, rotationAngle, selfRotation, material, orbitAround, renderable)
