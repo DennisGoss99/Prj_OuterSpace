@@ -1,5 +1,6 @@
 package cga.exercise.components.spaceObjects
 
+import cga.exercise.components.geometry.atmosphere.Atmosphere
 import cga.exercise.components.geometry.material.IMaterial
 import cga.exercise.components.geometry.mesh.Mesh
 import cga.exercise.components.geometry.mesh.RenderableBase
@@ -16,7 +17,9 @@ abstract class SpaceObject(val size: Float,
                            var rotationAngle : Float,
                            var selfRotation : Vector3f,
                            material : IMaterial,
-                           renderable : RenderableBase) : RenderableBase(renderable.meshes, renderable.modelMatrix, renderable.parent), IOrbit {
+                           var atmosphere: Atmosphere? = null,
+                           orbitAround : Transformable? = null,
+                           renderable : RenderableBase) : RenderableBase(renderable.meshes, renderable.modelMatrix, orbitAround), IOrbit {
 
 init {
     meshes.forEach { it.material = material }

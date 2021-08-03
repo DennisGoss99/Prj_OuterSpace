@@ -1,7 +1,9 @@
 package cga.exercise.components.spaceObjects
 
+import cga.exercise.components.geometry.atmosphere.Atmosphere
 import cga.exercise.components.geometry.material.IMaterial
 import cga.exercise.components.geometry.mesh.RenderableBase
+import cga.exercise.components.geometry.transformable.Transformable
 import org.joml.Vector3f
 
 class Sun(size: Float,
@@ -10,5 +12,7 @@ class Sun(size: Float,
           rotationAngle : Float,
           selfRotation : Vector3f,
           material : IMaterial,
+          atmosphere: Atmosphere? = null,
+          orbitAround: Transformable? = null,
           renderable : RenderableBase
-) : SpaceObject(size, distanceToParent, speed, rotationAngle, selfRotation, material, renderable)
+) : SpaceObject(size, distanceToParent, speed, rotationAngle, selfRotation, material, atmosphere, orbitAround, renderable)

@@ -2,6 +2,7 @@ package cga.exercise.components.spaceObjects
 
 import cga.exercise.components.geometry.material.IMaterial
 import cga.exercise.components.geometry.mesh.RenderableBase
+import cga.exercise.components.geometry.transformable.Transformable
 import org.joml.*
 
 class Moon(size: Float,
@@ -10,5 +11,6 @@ class Moon(size: Float,
            rotationAngle : Float,
            selfRotation : Vector3f,
            material : IMaterial,
+           orbitAround: Transformable? = null,
            renderable : RenderableBase
-) : SpaceObject(size, distanceToParent, speed, rotationAngle, selfRotation, material, renderable)
+) : SpaceObject(size, distanceToParent, speed, rotationAngle, selfRotation, material, null, orbitAround, renderable)

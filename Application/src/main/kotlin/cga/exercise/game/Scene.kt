@@ -74,19 +74,32 @@ class Scene(private val window: GameWindow) {
             32f
     )
 
-    private val spaceObjects = listOf(
-//        Moon(5f,40f,0.0f,0f,Vector2f(20.0f,90f), moonMaterial,Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!)),
-//        Moon(3f,60f,0.01f,0.01f,Vector2f(45.0f,0f), moonMaterial,Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!)),
-        Moon(0.27f,45f,0.01f,0.0001f,Vector3f(45.0f, 0f,0f), moonMaterial, Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!)),
-        Planet(1f,0f,0.00f,0.00f,Vector3f(2f,20f,0f), earthMaterial, Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!)) ,
-        Sun(4f,0f,0.00f,0.00f,Vector3f(20f,40f,0f), sunMaterial, Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
+    //Material Mars
+    var marsMaterial = Material(
+            Texture2D("assets/textures/planets/mars_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
+            Texture2D("assets/textures/planets/mars_emit.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
+            Texture2D("assets/textures/planets/mars_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
+            64f
     )
 
+//-------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    private val earthAtmosphere = Atmosphere(renderAlways, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(0.2f,0.6f,1.0f, 0.9f)),renderables["earth"])
-    private val marsAtmosphere = Atmosphere(renderAlways, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(208,105,70, 50)),renderables["mars"])
-//    private val sunAtmosphere = Atmosphere(renderAlways, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(208,105,70, 50)),renderables["sun"])
+    private val planetList = listOf(
+        Planet("earth",1f,0f,0.001f,0.00f,Vector3f(2f,20f,0f), earthMaterial, null,null,  Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!)),
+        Planet("mars",0.5f,0f,0.002f,0.1f,Vector3f(0f,40f,0f), marsMaterial, null,null,  Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
+    )
 
+    val moonlist = listOf<Moon>(
+            Moon(0.27f,45f,15f,0.0001f,Vector3f(45.0f, 0f,0f), moonMaterial, planetList[0], Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
+    )
+
+    private val sun = Sun(1f,0f,0f,0.00f,Vector3f(20f,40f,0f), sunMaterial, null, null, Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
+
+    private var earthAtmosphere = Atmosphere(renderAlways, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(0.2f,0.6f,1.0f, 0.9f)),planetList[0])
+    private val marsAtmosphere = Atmosphere(renderAlways, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(208,105,70, 50)),planetList[1])
+    private val sunAtmosphere = Atmosphere(renderAlways, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(208,105,70, 50)),sun)
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------
     private val pointLightHolder = PointLightHolder( mutableListOf(
         PointLight(Vector3f(20f,1f,20f),Vector3f(1f,0f,1f)),
         PointLight(Vector3f(-20f,1f,20f),Vector3f(1f,0f,1f)),
@@ -176,30 +189,26 @@ class Scene(private val window: GameWindow) {
             m.material = material
         }
 
-        //Material Mars
-        var marsMaterial = Material(
-            Texture2D("assets/textures/planets/mars_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-            Texture2D("assets/textures/planets/mars_emit.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-            Texture2D("assets/textures/planets/mars_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-            64f
-        )
-        renderables["mars"]?.meshes?.forEach { m ->
-            m.material = marsMaterial
-        }
+
+//        renderables["mars"]?.meshes?.forEach { m ->
+//            m.material = marsMaterial
+//        }
 
 
 
 
+        planetList[0]?.translateLocal(Vector3f(160f,0f,0f))
         earthAtmosphere.scaleLocal(Vector3f(22f))
 
-        renderables["mars"]?.translateLocal(Vector3f(160f,0f,0f))
-        renderables["mars"]?.scaleLocal(Vector3f(0.9f))
+        planetList[1]?.translateLocal(Vector3f(320f,0f,150f))
+        planetList[1]?.scaleLocal(Vector3f(0.9f))
 
         marsAtmosphere.scaleLocal(Vector3f(22f))
 
-        renderables["sun"]?.translateLocal(Vector3f(0f,200f,0f))
+        sun.scaleLocal(Vector3f(5f))
 
-
+          //Parents der Planeten setzen
+        planetList.forEach { it.parent = sun}
 
     }
 
@@ -220,7 +229,11 @@ class Scene(private val window: GameWindow) {
 
         camera.bind(mainShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
         renderables.render(cameraMode, mainShader)
-        spaceObjects.forEach { it.render(mainShader) }
+        //render spaceObjects
+        sun.render(mainShader)
+        planetList.forEach { it.render(mainShader) }
+        moonlist.forEach { it.render(mainShader) }
+
         //--
 
 
@@ -255,7 +268,7 @@ class Scene(private val window: GameWindow) {
     fun update(dt: Float, t: Float) {
 
         //renderables["moon"]?.rotateAroundPoint( 0f,0f,1f ,Vector3f(0f,0f,0f))
-        spaceObjects.forEach { it.orbit() }
+        planetList.forEach { it.orbit() }
 
         val rotationMultiplier = 30f
         val translationMultiplier = 10.0f
