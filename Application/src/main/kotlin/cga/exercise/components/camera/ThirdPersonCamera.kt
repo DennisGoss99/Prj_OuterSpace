@@ -8,7 +8,7 @@ class ThirdPersonCamera (
     FieldofView: Float = 90f,
     AspectRatio: Float = 16f / 9f,
     NearPlane: Float = 0.1f,
-    FarPlane: Float = 4000f,
+    FarPlane: Float = 40000f,
     modelMatrix: Matrix4f = Matrix4f(),
     parent: Transformable? = null
 ) : Camera(FieldofView, AspectRatio, NearPlane, FarPlane, modelMatrix, parent) {

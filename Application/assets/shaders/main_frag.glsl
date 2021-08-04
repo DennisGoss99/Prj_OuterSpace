@@ -10,6 +10,7 @@ in struct VertexData
 {
     vec3 position;
     vec2 texcoord;
+    float originAngle;
     vec3 normal;
     vec3 pointLightDir[MAX_POINTLIGHTS];
     vec3 spotLightDir[MAX_SPOTLIGHTS];
@@ -153,11 +154,11 @@ void main(){
         diffuseSpotSum += diffuse_spot * intensity;
 
     }
-    //
 
 
+    vec4 ambiantLight = diffTexture * min(1.0f, max(0.2f,vertexData.originAngle));
 
-    color = emitTexture + diffTexture * vec4(0.5f, 0.5f, 0.5f, 0.0f) +  diffusePointsSum + diffuseSpotSum;
+    color = emitTexture + ambiantLight + diffusePointsSum + diffuseSpotSum;
 
 }
 

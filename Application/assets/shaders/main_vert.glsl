@@ -27,6 +27,7 @@ out struct VertexData
 {
     vec3 position;
     vec2 texcoord;
+    float originAngle;
     vec3 normal;
     vec3 pointLightDir[MAX_POINTLIGHTS];
     vec3 spotLightDir[MAX_SPOTLIGHTS];
@@ -40,7 +41,6 @@ void main(){
 
     vertexData.position = -(modelView * vec4(position, 1.0f)).xyz;
     vertexData.normal = (transpose(inverse(modelView)) * vec4(normal, 0.0f)).xyz;
-
     vertexData.texcoord = texcoords * tcMultiplier;
 
 
@@ -53,5 +53,8 @@ void main(){
     {
         vertexData.pointLightDir[i] = (( view_matrix * vec4(pointLightPositions[i], 1.0f)) - (modelView * vec4(position, 1.0f) )).xyz;
     }
+
+    vec3 cosMidpoint = (( view_matrix * vec4(0.0f, 0.0f, 0.0f, 1.0f)) - (modelView * vec4(position, 1.0f) )).xyz;
+    vertexData.originAngle = max(0.0, dot(normalize(vertexData.normal), normalize(cosMidpoint)) + 0.70f);
 
 }
