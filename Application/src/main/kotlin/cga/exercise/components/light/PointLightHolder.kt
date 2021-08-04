@@ -43,7 +43,12 @@ class PointLightHolder(private val PointLightList: MutableList<PointLight>) : IP
 
         shaderProgram.use()
 
-        shaderProgram.setUniform(name + "Size", pointLightPositions.size / 3)
+        for (i in 0 until PointLightList.size * 3) {
+            pointLightPositions[i] = PointLightList[i/3].getWorldPosition()[i % 3]
+            pointLightColors[i] = PointLightList[i/3].lightColor[i % 3]
+        }
+
+        shaderProgram.setUniform(name + "Size", PointLightList.size)
 
         shaderProgram.setUniform(name + "Positions", pointLightPositions)
         shaderProgram.setUniform(name + "Colors", pointLightColors)

@@ -17,7 +17,7 @@ abstract class SpaceObject(val size: Float,
                            var rotationAngle : Float,
                            var selfRotation : Vector3f,
                            material : IMaterial,
-                           orbitAround : SpaceObject? = null,
+                           orbitAround : Transformable? = null,
                            renderable : RenderableBase) : RenderableBase(renderable.meshes, renderable.modelMatrix, orbitAround), IOrbit {
 
 init {

@@ -13,7 +13,7 @@ class Planet(name: String,
              rotationAngle : Float,
              selfRotation : Vector3f,
              material : IMaterial,
-             orbitAround : SpaceObject? = null,
+             orbitAround : Transformable? = null,
              renderable : RenderableBase
 ) : SpaceObject(size, distanceToParent, speed, rotationAngle, selfRotation, material, orbitAround, renderable){
 

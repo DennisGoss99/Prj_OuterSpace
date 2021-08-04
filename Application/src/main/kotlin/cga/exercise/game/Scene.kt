@@ -42,9 +42,7 @@ class Scene(private val window: GameWindow) {
     private val renderThirdPerson = listOf(RenderCategory.ThirdPerson)
 
     private val renderables = RenderableContainer( hashMapOf(
-        //"ground" to ModelLoader.loadModel("assets/models/ground.obj",0f,0f,0f)!!,
-//        "moon" to Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!),
-//        "mars" to Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!),
+        //"ground" to Renderable(renderAlways, ModelLoader.loadModel("assets/models/ground.obj",0f,0f,0f)!!),
         "spaceShip" to Renderable( renderThirdPerson ,ModelLoader.loadModel("assets/models/Spaceship/spaceShip.obj",0f,toRadians(180f),0f)!!),
         "spaceShipInside" to Renderable( renderFirstPerson ,ModelLoader.loadModel("assets/models/SpaceshipInside/spaceshipInside.obj",0f,toRadians(-90f),toRadians(0f))!!)
     ))
@@ -99,37 +97,38 @@ class Scene(private val window: GameWindow) {
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    private val sun = Sun(1f,0f,0f,0.00f,Vector3f(20f,40f,0f), sunMaterial,  null, Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
+    private val sizeOfSun = 20f
+
+    private val sun = Sun(sizeOfSun,0f,0f,0.00f,Vector3f(20f,40f,0f), sunMaterial,  null, Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
 
     private val planetList = listOf(
-        Planet("earth",1f,149f,0.0001f,0.00f,Vector3f(2f,20f,0f), earthMaterial, sun, Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!)),
-        Planet("mars",0.5f,227f,0.0002f,0.1f,Vector3f(0f,40f,0f), marsMaterial, sun, Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!)),
-        Planet("uranus",4.1f, 520f, 0.0001f, 0.5f,Vector3f(60f,0f,0f),uranusMaterial, sun, Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!)),
-        Planet("venus",0.95f, 80f, 0.0001f, 0.6f,Vector3f(60f,0f,0f),venusMaterial, sun, Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
+        Planet("earth",1f/sizeOfSun,149f,0.0001f,0.00f,Vector3f(2f,20f,0f), earthMaterial, sun,  Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!)),
+        Planet("mars",0.6f/sizeOfSun,227f,0.0002f,0.1f,Vector3f(0f,40f,0f), marsMaterial, sun,  Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!)),
+        Planet("uranus",4.1f/sizeOfSun, 520f, 0.0001f, 0.5f,Vector3f(60f,0f,0f),uranusMaterial,sun,Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!)),
+        Planet("venus",0.95f/sizeOfSun, 80f, 0.0001f, 0.6f,Vector3f(60f,0f,0f),venusMaterial,sun,Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
     )
 
     val moonlist = listOf<Moon>(
             Moon(0.27f,45f,10f,0.0001f,Vector3f(45.0f, 0f,0f), moonMaterial, planetList[0], Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
     )
 
+    private val atmosphereList = listOf(
+        Atmosphere(renderAlways, 1.4f, AtmosphereMaterial(Texture2D("assets/textures/sun/sun_diff.png",true), Color(0.6f,0.4f,0.4f, 0.4f)),sun),
+        Atmosphere(renderAlways, 1.3f, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(0.2f,0.6f,1.0f, 0.9f)),planetList[0]),
+        Atmosphere(renderAlways, 1.3f, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(208,105,70, 50)),planetList[1])
+        //        Atmosphere(renderAlways, 1.3f, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(208,105,70, 50)),renderables["spaceShipInside"]!!)
 
-    //private var earthAtmosphere = Atmosphere(renderAlways, 1f, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(0.2f,0.6f,1.0f, 0.9f)),planetList[0])
-    //private val marsAtmosphere = Atmosphere(renderAlways, 1f, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(208,105,70, 50)),planetList[1])
-    private val sunAtmosphere = Atmosphere(renderAlways, 10f, AtmosphereMaterial(Texture2D("assets/textures/sun/sun_diff.png",true), Color(0.6f,0.4f,0.4f, 0.4f)),planetList[0])
-
+    )
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
     private val pointLightHolder = PointLightHolder( mutableListOf(
-        PointLight(Vector3f(20f,1f,20f),Vector3f(1f,0f,1f)),
-        PointLight(Vector3f(-20f,1f,20f),Vector3f(1f,0f,1f)),
-        PointLight(Vector3f(-20f,1f,-20f),Vector3f(1f,0f,1f)),
-        //PointLight(Vector3f(20f,1f,-20f),Vector3f(1f,0f,1f)),
-        PointLight(Vector3f(0f,3f,-0f),Vector3f(1f,1f,1f))
+        PointLight(Vector3f(0f,4f,5f), Color(150 * 8 ,245 * 8,255 * 8).toVector3f(), renderables["spaceShipInside"])
+        //PointLight(Vector3f(20f,1f,20f),Vector3f(1f,0f,1f))
     ))
 
     private val spotLightHolder = SpotLightHolder( mutableListOf(
-        SpotLight(Vector3f(0f,1f,0f),Vector3f(1f,1f,1f),  50f, 70f),
-        SpotLight(Vector3f(0f,1f,0f),Vector3f(1f,1f,0.6f),  30f, 90f )
+//        SpotLight(Vector3f(0f,1f,0f),Vector3f(1f,1f,1f),  50f, 70f),
+//        SpotLight(Vector3f(0f,1f,0f),Vector3f(1f,1f,0.6f),  30f, 90f )
     ))
 
     // camera
@@ -193,6 +192,8 @@ class Scene(private val window: GameWindow) {
 
         //--
 
+
+
         //Material Boden
         var material = Material(
             Texture2D("assets/textures/planets/earth_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
@@ -204,6 +205,8 @@ class Scene(private val window: GameWindow) {
         renderables["ground"]?.meshes?.forEach { m ->
             m.material = material
         }
+
+        //renderables["ground"]?.parent = renderables["spaceShipInside"]
 
 //        earthAtmosphere.scaleLocal(Vector3f(22f))
 //        marsAtmosphere.scaleLocal(Vector3f(22f))
@@ -230,7 +233,6 @@ class Scene(private val window: GameWindow) {
         sun.render(mainShader)
         planetList.forEach { it.render(mainShader) }
         moonlist.forEach { it.render(mainShader) }
-
         //--
 
 
@@ -245,9 +247,7 @@ class Scene(private val window: GameWindow) {
         //-- AtmosphereShader
 
         atmospherePerspective.bind(atmosphereShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
-//        earthAtmosphere.render(atmosphereShader)
-//        marsAtmosphere.render(atmosphereShader)
-        sunAtmosphere.render(atmosphereShader)
+        atmosphereList.forEach { it.render(atmosphereShader) }
 
         //--
 
