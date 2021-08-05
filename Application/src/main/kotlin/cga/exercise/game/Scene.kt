@@ -305,9 +305,11 @@ class Scene(private val window: GameWindow) {
 
         if (cameraMode == RenderCategory.ThirdPerson){
             if (window.getKeyState ( GLFW_KEY_A))
+ //               movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt))
                 movingObject.rotateLocal(0.0f, rotationMultiplier* dt, 0.0f)
 
             if (window.getKeyState ( GLFW_KEY_D))
+ //               movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt))
                 movingObject.rotateLocal(0.0f, -rotationMultiplier* dt, 0.0f)
         }
 
