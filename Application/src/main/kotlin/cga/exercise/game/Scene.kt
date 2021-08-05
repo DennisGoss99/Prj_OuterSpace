@@ -10,6 +10,9 @@ import cga.exercise.components.geometry.skybox.*
 import cga.exercise.components.geometry.gui.*
 import cga.exercise.components.geometry.material.*
 import cga.exercise.components.geometry.mesh.*
+import cga.exercise.components.geometry.particle.Particle
+import cga.exercise.components.geometry.particle.ParticleHolder
+import cga.exercise.components.geometry.particle.ParticleSpawner
 import cga.exercise.components.geometry.transformable.Transformable
 import cga.exercise.components.light.*
 import cga.exercise.components.shader.ShaderProgram
@@ -34,8 +37,9 @@ class Scene(private val window: GameWindow) {
     //Shader
     private val mainShader: ShaderProgram = ShaderProgram("assets/shaders/main_vert.glsl", "assets/shaders/main_frag.glsl")
     private val skyBoxShader: ShaderProgram = ShaderProgram("assets/shaders/skyBox_vert.glsl", "assets/shaders/skyBox_frag.glsl")
-    private val guiShader: ShaderProgram = ShaderProgram("assets/shaders/gui_vert.glsl", "assets/shaders/gui_frag.glsl")
     private val atmosphereShader: ShaderProgram = ShaderProgram("assets/shaders/atmosphere_vert.glsl", "assets/shaders/atmosphere_frag.glsl")
+    private val particleShader: ShaderProgram = ShaderProgram("assets/shaders/particle_vert.glsl", "assets/shaders/particle_frag.glsl")
+    private val guiShader: ShaderProgram = ShaderProgram("assets/shaders/gui_vert.glsl", "assets/shaders/gui_frag.glsl")
 
     private val renderAlways = listOf(RenderCategory.FirstPerson,RenderCategory.ThirdPerson)
     private val renderFirstPerson = listOf(RenderCategory.FirstPerson)
@@ -95,6 +99,8 @@ class Scene(private val window: GameWindow) {
             64f
     )
 
+
+    private var thrusterMaterial = AtlasMaterial(5,200,Texture2D("assets/textures/particle/thrusterAtlas.png",true))
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 
     private val sizeOfSun = 20f
@@ -206,11 +212,9 @@ class Scene(private val window: GameWindow) {
             m.material = material
         }
 
-        //renderables["ground"]?.parent = renderables["spaceShipInside"]
-
-//        earthAtmosphere.scaleLocal(Vector3f(22f))
-//        marsAtmosphere.scaleLocal(Vector3f(22f))
     }
+
+    private val particleSpawner = ParticleSpawner(Particle(Vector3f(0f,0f,0f), Vector3f(30f,0f,0f),10f,45f,10f), thrusterMaterial, camera)
 
     var lastTime = 0.5f
 
@@ -244,11 +248,16 @@ class Scene(private val window: GameWindow) {
         skyboxRenderer.render(skyBoxShader)
         //--
 
-        //-- AtmosphereShader
 
+
+        //-- Particle
+        particleSpawner.bind(particleShader,camera.getCalculateProjectionMatrix(),camera.getCalculateViewMatrix())
+        particleSpawner.render(particleShader)
+        //--
+
+        //-- AtmosphereShader
         atmospherePerspective.bind(atmosphereShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
         atmosphereList.forEach { it.render(atmosphereShader) }
-
         //--
 
         //-- GuiShader
@@ -267,6 +276,8 @@ class Scene(private val window: GameWindow) {
         //renderables["moon"]?.rotateAroundPoint( 0f,0f,1f ,Vector3f(0f,0f,0f))
         planetList.forEach { it.orbit() }
 
+        particleSpawner.update(dt)
+
         val rotationMultiplier = 30f
         val translationMultiplier = 10.0f
 
@@ -281,6 +292,7 @@ class Scene(private val window: GameWindow) {
 
         if (window.getKeyState ( GLFW_KEY_W)) {
             movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt))
+            particleSpawner.add()
         }
 
         if (window.getKeyState ( GLFW_KEY_S)) {
@@ -383,6 +395,8 @@ class Scene(private val window: GameWindow) {
         mainShader.cleanup()
         guiShader.cleanup()
         skyBoxShader.cleanup()
+
+        particleSpawner.cleanup()
     }
 
 
