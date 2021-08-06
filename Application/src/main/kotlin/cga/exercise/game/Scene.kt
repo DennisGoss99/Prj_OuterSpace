@@ -8,23 +8,21 @@ import cga.exercise.components.geometry.RenderCategory
 import cga.exercise.components.geometry.atmosphere.*
 import cga.exercise.components.geometry.skybox.*
 import cga.exercise.components.geometry.gui.*
-import cga.exercise.components.geometry.material.*
+import cga.exercise.components.geometry.material.SimpleMaterial
 import cga.exercise.components.geometry.mesh.*
-import cga.exercise.components.geometry.particle.Particle
-import cga.exercise.components.geometry.particle.ParticleHolder
-import cga.exercise.components.geometry.particle.ParticleSpawner
 import cga.exercise.components.geometry.transformable.Transformable
 import cga.exercise.components.light.*
+import cga.exercise.components.mapGenerator.MapGenerator
+import cga.exercise.components.mapGenerator.MapGeneratorMaterials
+import cga.exercise.components.mapGenerator.SolarSystem
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.spaceObjects.*
 import cga.exercise.components.spaceObjects.spaceship.Spaceship
-import cga.exercise.components.spaceObjects.spaceship.Thruster
 import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
 import cga.framework.GameWindow
 import cga.framework.ModelLoader
 import org.joml.Math.toRadians
-import org.joml.Matrix4f
 import org.joml.Vector2f
 import org.joml.Vector3f
 import org.lwjgl.glfw.GLFW.*
@@ -56,95 +54,7 @@ class Scene(private val window: GameWindow) {
     ))
 
     //Material Moon
-    private val moonMaterial = Material(
-        Texture2D("assets/textures/planets/moon_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-        Texture2D("assets/textures/planets/moon_emit.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-        Texture2D("assets/textures/planets/moon_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-        32f
-    )
 
-    var earthMaterial = OverlayMaterial(
-        Texture2D("assets/textures/planets/earth_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-        Texture2D("assets/textures/planets/earth_emit.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-        Texture2D("assets/textures/planets/earth_spec.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-        Texture2D("assets/textures/planets/earth_clouds.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-        64f
-    )
-
-    var venusMaterial = OverlayMaterial(
-            Texture2D("assets/textures/planets/venus_diff.jpg",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-            Texture2D("assets/textures/planets/mars_emit.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-            Texture2D("assets/textures/planets/venus_diff.jpg",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-            Texture2D("assets/textures/planets/venus_storms2.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-            64f
-    )
-
-    //Material Sun
-    private val sunMaterial = Material(
-            Texture2D("assets/textures/sun/sun_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-            Texture2D("assets/textures/sun/sun_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-            Texture2D("assets/textures/sun/sun_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-            32f
-    )
-
-    //Material Mars
-    var marsMaterial = Material(
-            Texture2D("assets/textures/planets/mars_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-            Texture2D("assets/textures/planets/mars_emit.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-            Texture2D("assets/textures/planets/mars_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-            64f
-    )
-
-    //Material Uranus
-    var uranusMaterial = Material(
-            Texture2D("assets/textures/planets/uranus_diff.jpg",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-            Texture2D("assets/textures/planets/mars_emit.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-            Texture2D("assets/textures/planets/uranus_diff.jpg",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-            50f
-    )
-
-    //Material Mars
-    var saturnMaterial = Material(
-            Texture2D("assets/textures/planets/saturn_diff.jpg",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-            Texture2D("assets/textures/planets/mars_emit.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-            Texture2D("assets/textures/planets/saturn_diff.jpg",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-            64f
-    )
-
-    var jupiterMaterial = Material(
-            Texture2D("assets/textures/planets/jupiter_diff.jpg",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-            Texture2D("assets/textures/planets/mars_emit.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-            Texture2D("assets/textures/planets/jupiter_diff.jpg",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-            32f
-    )
-
-
-    //-------------------------------------------------------------------------------------------------------------------------------------------------------
-
-    private val sizeOfSun = 20f
-
-    private val sun = Sun(sizeOfSun,0f,0f,0.00f,Vector3f(20f,40f,0f), sunMaterial,  null, Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
-
-    private val planetList = listOf(
-        Planet("earth",1f/sizeOfSun,149f,0.0001f,0.00f,Vector3f(2f,20f,0f), earthMaterial, sun,  Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!)),
-        Planet("mars",0.6f/sizeOfSun,227f,0.0002f,0.1f,Vector3f(0f,40f,0f), marsMaterial, sun,  Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!)),
-        Planet("uranus",4.1f/sizeOfSun, 520f, 0.0002f, 0.5f,Vector3f(60f,0f,0f),uranusMaterial,sun,Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!)),
-        Planet("venus",0.95f/sizeOfSun, 80f, 0.0001f, 0.2f,Vector3f(30f,20f,0f),venusMaterial,sun,Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!)),
-        Planet("saturn",5.5f/sizeOfSun, 400f, 0.00001f, 0.6f,Vector3f(60f,0f,0f),saturnMaterial,sun,Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!)),
-        Planet("jupiter",7.0f/sizeOfSun, 300f, 0.0001f, 0.3f,Vector3f(0f,0f,0f),jupiterMaterial,sun,Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
-    )
-
-    val moonlist = listOf<Moon>(
-            Moon(0.27f,45f,10f,0.0001f,Vector3f(45.0f, 0f,0f), moonMaterial, planetList[0], Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
-    )
-
-    private val atmosphereList = listOf(
-        Atmosphere(renderAlways, 1.4f, AtmosphereMaterial(Texture2D("assets/textures/sun/sun_diff.png",true), Color(0.6f,0.4f,0.4f, 0.4f)),sun),
-        Atmosphere(renderAlways, 1.3f, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(0.2f,0.6f,1.0f, 0.9f)),planetList[0]),
-        Atmosphere(renderAlways, 1.3f, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(208,105,70, 50)),planetList[1])
-        //        Atmosphere(renderAlways, 1.3f, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(208,105,70, 50)),renderables["spaceShipInside"]!!)
-
-    )
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
     private val pointLightHolder = PointLightHolder( mutableListOf(
@@ -186,6 +96,69 @@ class Scene(private val window: GameWindow) {
     ))
 
 
+    private val earth = Planet(
+        "earth",
+        1f,149f,0.0001f,0.00f,Vector3f(2f,20f,0f),
+        MapGeneratorMaterials.earthMaterial,
+        Atmosphere(renderAlways, 1.3f, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(208,105,70, 50))),
+        null,
+        listOf(Moon(0.27f,8f,0.001f,0.0001f,Vector3f(45.0f, 0f,0f), MapGeneratorMaterials.moonMaterial, Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))),
+        Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
+
+    private val mars = Planet(
+        "mars",
+        0.6f,227f,0.0002f,0.1f,Vector3f(0f,40f,0f),
+        MapGeneratorMaterials.marsMaterial,
+        Atmosphere(renderAlways, 1.3f, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(208,105,70, 50))),
+        null,
+        listOf(),
+        Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
+
+    private val uranus = Planet(
+        "uranus",
+        4.1f, 520f, 0.0002f, 0.5f,Vector3f(60f,0f,0f),
+        MapGeneratorMaterials.uranusMaterial,
+        null,
+        null,
+        listOf(),
+        Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
+
+    private val venus = Planet(
+        "venus",
+        0.95f, 80f, 0.0001f, 0.2f,Vector3f(30f,20f,0f),
+        MapGeneratorMaterials.venusMaterial,
+        null,
+        null,
+        listOf(),
+        Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
+
+    private val saturn = Planet(
+        "saturn",
+        5.5f, 400f, 0.00001f, 0.6f,Vector3f(60f,0f,0f),
+        MapGeneratorMaterials.saturnMaterial,
+        null,
+        PlanetRing(1f,0f,0f,0f, Vector3f(0f,0f,0f),Renderable( renderAlways ,ModelLoader.loadModel("assets/models/ring/ring.obj",0f,0f,0f)!!)),
+        listOf(),
+        Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
+
+    private val jupiter = Planet(
+        "jupiter",7.0f, 300f, 0.0001f, 0.3f,Vector3f(0f,0f,0f),
+        MapGeneratorMaterials.jupiterMaterial,
+        null,
+        null,
+        listOf(),
+        Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
+
+    private val sun = Sun(
+        20f,0f,0f,0.00f,Vector3f(20f,40f,0f),
+        MapGeneratorMaterials.sunMaterial,
+        Atmosphere(listOf(RenderCategory.FirstPerson, RenderCategory.ThirdPerson), 1.2f, MapGeneratorMaterials.sunAtmosphereMaterial),
+        Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
+
+    private var solarSystem = SolarSystem(
+        listOf(sun),
+        listOf(earth, mars, uranus, venus, saturn, jupiter)
+    )
 
     //scene setup
     init {
@@ -255,12 +228,8 @@ class Scene(private val window: GameWindow) {
 
         camera.bind(mainShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
         renderables.render(cameraMode, mainShader)
-        //render spaceObjects
-        sun.render(mainShader)
-        planetList.forEach { it.render(mainShader) }
-        moonlist.forEach { it.render(mainShader) }
-        //--
 
+        solarSystem.renderSpaceObjects(mainShader)
 
 
 
@@ -279,7 +248,7 @@ class Scene(private val window: GameWindow) {
 
         //-- AtmosphereShader
         atmospherePerspective.bind(atmosphereShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
-        atmosphereList.forEach { it.render(atmosphereShader) }
+        solarSystem.renderAtmosphere(atmosphereShader)
         //--
 
         //-- GuiShader
@@ -295,13 +264,12 @@ class Scene(private val window: GameWindow) {
 
     fun update(dt: Float, t: Float) {
 
-        //renderables["moon"]?.rotateAroundPoint( 0f,0f,1f ,Vector3f(0f,0f,0f))
-        planetList.forEach { it.orbit() }
+        solarSystem.update(dt,t)
 
         spaceship.updateThrusters(dt)
 
         val rotationMultiplier = 30f
-        val translationMultiplier = 10.0f
+        val translationMultiplier = 35.0f
 
         if (window.getKeyState(GLFW_KEY_Q)) {
             movingObject.rotateLocal(rotationMultiplier * dt, 0.0f, 0.0f)
@@ -322,11 +290,11 @@ class Scene(private val window: GameWindow) {
         }
 
         if (window.getKeyState ( GLFW_KEY_G)) {
-            movingObject.translateLocal(Vector3f(0.0f, 0.0f, translationMultiplier * dt * 100))
+            movingObject.translateLocal(Vector3f(0.0f, 0.0f, translationMultiplier * dt * 10))
         }
 
         if (window.getKeyState ( GLFW_KEY_T)) {
-            movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt * 100))
+            movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt * 10))
         }
 
         if (cameraMode == RenderCategory.FirstPerson){
@@ -373,6 +341,11 @@ class Scene(private val window: GameWindow) {
         if(GLFW_KEY_L == key && action == 0){
             println(camera.getPosition())
         }
+
+        if(GLFW_KEY_N == key && action == 0){
+            solarSystem = MapGenerator.generateSolarSystem()
+        }
+
 
     }
 

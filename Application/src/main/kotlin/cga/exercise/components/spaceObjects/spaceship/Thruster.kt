@@ -16,7 +16,7 @@ class Thruster(spaceship: Transformable, position: Vector3f) : IRenderable, IPer
     private var thrusterMaterial = AtlasMaterial(5,200, Texture2D("assets/textures/particle/thrusterAtlas.png",true))
 
     private val thrusterTransformable = Transformable(parent = spaceship)
-    private val particleSpawner = ParticleSpawner(Particle(Vector3f(0f), Vector3f(0f,0f,0f),1f,-90f,2f), thrusterMaterial, thrusterTransformable)
+    private val particleSpawner = ParticleSpawner(Particle(Vector3f(0f), Vector3f(0f,0f,0f),0.4f,-90f,2f), thrusterMaterial, thrusterTransformable)
 
 
     init {

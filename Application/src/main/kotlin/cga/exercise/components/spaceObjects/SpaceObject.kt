@@ -16,13 +16,15 @@ abstract class SpaceObject(val size: Float,
                            var speed : Float,
                            var rotationAngle : Float,
                            var selfRotation : Vector3f,
-                           material : IMaterial,
+                           material : IMaterial?,
                            orbitAround : Transformable? = null,
                            renderable : RenderableBase) : RenderableBase(renderable.meshes, renderable.modelMatrix, orbitAround), IOrbit {
 
 init {
-    meshes.forEach { it.material = material }
-    translateLocal(Vector3f(distanceToParent,0f,0f))
+    if(material != null)
+        meshes.forEach { it.material = material }
+
+    translateLocal(Vector3f(distanceToParent * 20f,0f,0f))
     scaleLocal(Vector3f(size))
 
     selfRotation.mul(0.001f)

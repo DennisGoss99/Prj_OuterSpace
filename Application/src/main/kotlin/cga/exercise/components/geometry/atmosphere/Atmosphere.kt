@@ -14,11 +14,9 @@ import org.lwjgl.opengl.GL30
 
 class Atmosphere ( val shouldRender : List<RenderCategory>,
                    scale : Float = 1f,
-                   simpleMaterial: SimpleMaterial ,
-                   parent: Transformable) :
-                        RenderableBase(
-                            (ModelLoader.loadModel("assets/models/atmosphereSphere.obj",0f,0f,0f) ?: throw Exception("Couldn't find Object: 'atmosphereSphere.obj'")).meshes,
-                            parent = parent) {
+                   simpleMaterial: SimpleMaterial
+                ) : RenderableBase((ModelLoader.loadModel("assets/models/atmosphereSphere.obj",0f,0f,0f) ?: throw Exception("Couldn't find Object: 'atmosphereSphere.obj'")).meshes)
+{
     init {
         meshes[0].material = simpleMaterial
 

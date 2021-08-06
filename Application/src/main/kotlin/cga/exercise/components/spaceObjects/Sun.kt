@@ -12,6 +12,11 @@ class Sun(size: Float,
           rotationAngle : Float,
           selfRotation : Vector3f,
           material : IMaterial,
-          orbitAround: Transformable? = null,
+          val atmosphere: Atmosphere? = null,
           renderable : RenderableBase
-) : SpaceObject(size, distanceToParent, speed, rotationAngle, selfRotation, material, orbitAround, renderable)
+) : SpaceObject(size, distanceToParent, speed, rotationAngle, selfRotation, material, null, renderable)
+{
+    init {
+        atmosphere?.parent = this
+    }
+}

@@ -9,6 +9,10 @@ import org.joml.Vector3f
 
 class Spaceship(shouldRender: List<RenderCategory>, renderable: RenderableBase) : Renderable(shouldRender, renderable) {
 
+    init {
+
+    }
+
     private val thrusters = listOf(
         Thruster(this, Vector3f(1.25f,-0.3f,3.5f)),
         Thruster(this, Vector3f(-1.25f,-0.3f,3.5f))
