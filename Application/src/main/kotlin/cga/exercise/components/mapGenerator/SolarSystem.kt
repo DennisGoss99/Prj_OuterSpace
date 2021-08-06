@@ -2,12 +2,14 @@ package cga.exercise.components.mapGenerator
 
 import cga.exercise.components.geometry.transformable.Transformable
 import cga.exercise.components.shader.ShaderProgram
+import cga.exercise.components.spaceObjects.Moon
 import cga.exercise.components.spaceObjects.Planet
 import cga.exercise.components.spaceObjects.Sun
 
 class SolarSystem (
     private val suns : List<Sun>,
     private val planets : List<Planet>
+ //   private val moons : List<Moon>
 ) : Transformable()
 {
 
@@ -21,6 +23,7 @@ class SolarSystem (
 
         suns.forEach { it.render(shaderProgram) }
         planets.forEach { it.render(shaderProgram) }
+
 
 
     }

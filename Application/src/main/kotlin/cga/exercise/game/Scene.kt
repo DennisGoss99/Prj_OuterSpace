@@ -338,10 +338,6 @@ class Scene(private val window: GameWindow) {
                 }
             }
 
-        if(GLFW_KEY_L == key && action == 0){
-            println(camera.getPosition())
-        }
-
         if(GLFW_KEY_N == key && action == 0){
             solarSystem = MapGenerator.generateSolarSystem()
         }

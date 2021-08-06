@@ -75,13 +75,46 @@ class MapGeneratorMaterials {
             32f
         )
 
+        val merkurMaterial = Material(
+                Texture2D("assets/textures/planets/merkur_diff.jpg",true).setTexParams( GL11.GL_REPEAT, GL11.GL_REPEAT, GL11.GL_LINEAR_MIPMAP_LINEAR, GL11.GL_LINEAR),
+                Texture2D("assets/textures/planets/mars_emit.png",true).setTexParams( GL11.GL_REPEAT, GL11.GL_REPEAT, GL11.GL_LINEAR_MIPMAP_LINEAR, GL11.GL_LINEAR),
+                Texture2D("assets/textures/planets/merkur_diff.jpg",true).setTexParams( GL11.GL_REPEAT, GL11.GL_REPEAT, GL11.GL_LINEAR_MIPMAP_LINEAR, GL11.GL_LINEAR),
+                32f
+        )
+
+        val neptunMaterial = Material(
+                Texture2D("assets/textures/planets/neptun_diff.jpg",true).setTexParams( GL11.GL_REPEAT, GL11.GL_REPEAT, GL11.GL_LINEAR_MIPMAP_LINEAR, GL11.GL_LINEAR),
+                Texture2D("assets/textures/planets/mars_emit.png",true).setTexParams( GL11.GL_REPEAT, GL11.GL_REPEAT, GL11.GL_LINEAR_MIPMAP_LINEAR, GL11.GL_LINEAR),
+                Texture2D("assets/textures/planets/neptun_diff.jpg",true).setTexParams( GL11.GL_REPEAT, GL11.GL_REPEAT, GL11.GL_LINEAR_MIPMAP_LINEAR, GL11.GL_LINEAR),
+                32f
+        )
+
+        val fiktiv1Material = Material(
+                Texture2D("assets/textures/planets/fiktiv1_diff.jpg",true).setTexParams( GL11.GL_REPEAT, GL11.GL_REPEAT, GL11.GL_LINEAR_MIPMAP_LINEAR, GL11.GL_LINEAR),
+                Texture2D("assets/textures/planets/mars_emit.png",true).setTexParams( GL11.GL_REPEAT, GL11.GL_REPEAT, GL11.GL_LINEAR_MIPMAP_LINEAR, GL11.GL_LINEAR),
+                Texture2D("assets/textures/planets/fiktiv1_diff.jpg",true).setTexParams( GL11.GL_REPEAT, GL11.GL_REPEAT, GL11.GL_LINEAR_MIPMAP_LINEAR, GL11.GL_LINEAR),
+                32f
+        )
+
+        val fiktiv2Material = Material(
+                Texture2D("assets/textures/planets/fiktiv2_diff.jpg",true).setTexParams( GL11.GL_REPEAT, GL11.GL_REPEAT, GL11.GL_LINEAR_MIPMAP_LINEAR, GL11.GL_LINEAR),
+                Texture2D("assets/textures/planets/mars_emit.png",true).setTexParams( GL11.GL_REPEAT, GL11.GL_REPEAT, GL11.GL_LINEAR_MIPMAP_LINEAR, GL11.GL_LINEAR),
+                Texture2D("assets/textures/planets/fiktiv2_diff.jpg",true).setTexParams( GL11.GL_REPEAT, GL11.GL_REPEAT, GL11.GL_LINEAR_MIPMAP_LINEAR, GL11.GL_LINEAR),
+                32f
+        )
+
+
         val PlanetMaterials = listOf(
             earthMaterial,
             marsMaterial,
             venusMaterial,
             uranusMaterial,
             saturnMaterial,
-            jupiterMaterial
+            jupiterMaterial,
+            merkurMaterial,
+            neptunMaterial,
+            fiktiv1Material,
+            fiktiv2Material
         )
 
         val sunAtmosphereMaterial = AtmosphereMaterial(Texture2D("assets/textures/sun/sun_diff.png",true), Color(0.6f,0.4f,0.4f, 0.4f))
