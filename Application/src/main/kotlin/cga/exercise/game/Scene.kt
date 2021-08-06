@@ -100,7 +100,22 @@ class Scene(private val window: GameWindow) {
             Texture2D("assets/textures/planets/uranus_diff.jpg",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
             Texture2D("assets/textures/planets/mars_emit.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
             Texture2D("assets/textures/planets/uranus_diff.jpg",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
+            50f
+    )
+
+    //Material Mars
+    var saturnMaterial = Material(
+            Texture2D("assets/textures/planets/saturn_diff.jpg",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
+            Texture2D("assets/textures/planets/mars_emit.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
+            Texture2D("assets/textures/planets/saturn_diff.jpg",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
             64f
+    )
+
+    var jupiterMaterial = Material(
+            Texture2D("assets/textures/planets/jupiter_diff.jpg",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
+            Texture2D("assets/textures/planets/mars_emit.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
+            Texture2D("assets/textures/planets/jupiter_diff.jpg",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
+            32f
     )
 
 
@@ -113,8 +128,10 @@ class Scene(private val window: GameWindow) {
     private val planetList = listOf(
         Planet("earth",1f/sizeOfSun,149f,0.0001f,0.00f,Vector3f(2f,20f,0f), earthMaterial, sun,  Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!)),
         Planet("mars",0.6f/sizeOfSun,227f,0.0002f,0.1f,Vector3f(0f,40f,0f), marsMaterial, sun,  Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!)),
-        Planet("uranus",4.1f/sizeOfSun, 520f, 0.0001f, 0.5f,Vector3f(60f,0f,0f),uranusMaterial,sun,Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!)),
-        Planet("venus",0.95f/sizeOfSun, 80f, 0.0001f, 0.6f,Vector3f(60f,0f,0f),venusMaterial,sun,Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
+        Planet("uranus",4.1f/sizeOfSun, 520f, 0.0002f, 0.5f,Vector3f(60f,0f,0f),uranusMaterial,sun,Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!)),
+        Planet("venus",0.95f/sizeOfSun, 80f, 0.0001f, 0.2f,Vector3f(30f,20f,0f),venusMaterial,sun,Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!)),
+        Planet("saturn",5.5f/sizeOfSun, 400f, 0.00001f, 0.6f,Vector3f(60f,0f,0f),saturnMaterial,sun,Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!)),
+        Planet("jupiter",7.0f/sizeOfSun, 300f, 0.0001f, 0.3f,Vector3f(0f,0f,0f),jupiterMaterial,sun,Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
     )
 
     val moonlist = listOf<Moon>(
