@@ -4,13 +4,21 @@ https://www.youtube.com/playlist?list=PLRIWtICgwaX0u7Rf9zkZhLoLuZVfUksDP
 
 Texturen:
 
+Skybox:
+https://assetstore.unity.com/packages/2d/textures-materials/sky/3-skyboxes-25142
+
 Sonnensystem
 https://www.solarsystemscope.com/textures/
 
+Cockpit
+https://wallpaperaccess.com/space-shuttle-cockpit
+
 Flammen
 https://www.deviantart.com/joesalotofthings/art/Multi-Shot-02Red-Muzzle-Flash-Special-Effect-867844881
+
 Saturn Ringe
 https://www.deviantart.com/alpha-element/art/Stock-Image-Saturn-Rings-393767006
+
 Raumschiff Modell
 
 Code:
