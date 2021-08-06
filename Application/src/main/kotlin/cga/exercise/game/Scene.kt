@@ -17,6 +17,8 @@ import cga.exercise.components.geometry.transformable.Transformable
 import cga.exercise.components.light.*
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.spaceObjects.*
+import cga.exercise.components.spaceObjects.spaceship.Spaceship
+import cga.exercise.components.spaceObjects.spaceship.Thruster
 import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
 import cga.framework.GameWindow
@@ -45,9 +47,11 @@ class Scene(private val window: GameWindow) {
     private val renderFirstPerson = listOf(RenderCategory.FirstPerson)
     private val renderThirdPerson = listOf(RenderCategory.ThirdPerson)
 
+    private val spaceship = Spaceship( renderThirdPerson, Renderable( renderThirdPerson ,ModelLoader.loadModel("assets/models/Spaceship/spaceShip.obj",0f,toRadians(180f),0f)!!))
+
     private val renderables = RenderableContainer( hashMapOf(
         //"ground" to Renderable(renderAlways, ModelLoader.loadModel("assets/models/ground.obj",0f,0f,0f)!!),
-        "spaceShip" to Renderable( renderThirdPerson ,ModelLoader.loadModel("assets/models/Spaceship/spaceShip.obj",0f,toRadians(180f),0f)!!),
+        "spaceShip" to spaceship,
         "spaceShipInside" to Renderable( renderFirstPerson ,ModelLoader.loadModel("assets/models/SpaceshipInside/spaceshipInside.obj",0f,toRadians(-90f),toRadians(0f))!!)
     ))
 
@@ -100,8 +104,7 @@ class Scene(private val window: GameWindow) {
     )
 
 
-    private var thrusterMaterial = AtlasMaterial(5,200,Texture2D("assets/textures/particle/thrusterAtlas.png",true))
-//-------------------------------------------------------------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------------------------------------------
 
     private val sizeOfSun = 20f
 
@@ -184,15 +187,15 @@ class Scene(private val window: GameWindow) {
 
             // firstPersonCamera
                 firstPersonCamera.parent = null
-                firstPersonCamera.modelMatrix = renderables["spaceShip"]!!.getWorldModelMatrix()
+                firstPersonCamera.modelMatrix = spaceship!!.getWorldModelMatrix()
 
                 renderables["spaceShipInside"]!!.parent = firstPersonCamera
                 renderables["spaceShipInside"]!!.translateLocal(Vector3f(0f,-5f,-12f))
                 renderables["spaceShipInside"]!!.rotateLocal(5f,0f,0f)
 
             // thirdPersonCamera
-                renderables["spaceShip"]!!.modelMatrix = thirdPersonCamera.modelMatrix
-                thirdPersonCamera.parent = renderables["spaceShip"]
+                spaceship.modelMatrix = thirdPersonCamera.modelMatrix
+                thirdPersonCamera.parent = spaceship
                 thirdPersonCamera.translateGlobal(Vector3f(0f, 6f, 14f))
                 thirdPersonCamera.rotateLocal(-40f,0f,0f)
 
@@ -201,20 +204,22 @@ class Scene(private val window: GameWindow) {
 
 
         //Material Boden
-        var material = Material(
-            Texture2D("assets/textures/planets/earth_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-            Texture2D("assets/textures/ground_emit.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-            Texture2D("assets/textures/planets/earth_spec.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-            64f,
-            Vector2f(1f))
+//        var material = Material(
+//            Texture2D("assets/textures/planets/earth_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
+//            Texture2D("assets/textures/ground_emit.png",true).setTexParams(GL_REPEAT,
+//                GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
+//            Texture2D("assets/textures/planets/earth_spec.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
+//            64f,
+//            Vector2f(1f))
 
-        renderables["ground"]?.meshes?.forEach { m ->
-            m.material = material
-        }
+//        renderables["ground"]?.meshes?.forEach { m ->
+//            m.material = material
+//        }
+
+
 
     }
 
-    private val particleSpawner = ParticleSpawner(Particle(Vector3f(0f,0f,0f), Vector3f(30f,0f,0f),10f,45f,10f), thrusterMaterial, camera)
 
     var lastTime = 0.5f
 
@@ -251,8 +256,8 @@ class Scene(private val window: GameWindow) {
 
 
         //-- Particle
-        particleSpawner.bind(particleShader,camera.getCalculateProjectionMatrix(),camera.getCalculateViewMatrix())
-        particleSpawner.render(particleShader)
+        spaceship.bindThrusters(particleShader,camera.getCalculateProjectionMatrix(),camera.getCalculateViewMatrix())
+        spaceship.renderThrusters(particleShader)
         //--
 
         //-- AtmosphereShader
@@ -276,7 +281,7 @@ class Scene(private val window: GameWindow) {
         //renderables["moon"]?.rotateAroundPoint( 0f,0f,1f ,Vector3f(0f,0f,0f))
         planetList.forEach { it.orbit() }
 
-        particleSpawner.update(dt)
+        spaceship.updateThrusters(dt)
 
         val rotationMultiplier = 30f
         val translationMultiplier = 10.0f
@@ -292,7 +297,7 @@ class Scene(private val window: GameWindow) {
 
         if (window.getKeyState ( GLFW_KEY_W)) {
             movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt))
-            particleSpawner.add()
+            spaceship.activateMainThrusters()
         }
 
         if (window.getKeyState ( GLFW_KEY_S)) {
@@ -334,11 +339,11 @@ class Scene(private val window: GameWindow) {
             when(cameraMode){
 
                 RenderCategory.FirstPerson ->{
-                    renderables["spaceShip"]!!.modelMatrix = firstPersonCamera.modelMatrix
+                    spaceship.modelMatrix = firstPersonCamera.modelMatrix
                     camera = thirdPersonCamera
                     cameraMode = RenderCategory.ThirdPerson
 
-                    movingObject = renderables["spaceShip"]!!
+                    movingObject = spaceship
                 }
                 RenderCategory.ThirdPerson -> {
 
@@ -348,8 +353,10 @@ class Scene(private val window: GameWindow) {
                 }
             }
 
-        if(GLFW_KEY_L == key )
+        if(GLFW_KEY_L == key && action == 0){
             println(camera.getPosition())
+        }
+
     }
 
 
@@ -388,7 +395,6 @@ class Scene(private val window: GameWindow) {
     }
 
     fun cleanup() {
-
         renderables.cleanup()
         gui.cleanup()
 
@@ -396,7 +402,7 @@ class Scene(private val window: GameWindow) {
         guiShader.cleanup()
         skyBoxShader.cleanup()
 
-        particleSpawner.cleanup()
+
     }
 
 

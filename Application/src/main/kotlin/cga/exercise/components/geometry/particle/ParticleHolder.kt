@@ -54,7 +54,7 @@ open class ParticleHolder(var particles: MutableList<Particle>, val material: At
 
         particles.forEach {
             bindParticleMatrix(shaderProgram, getViewModelMatrix4f(it, viewMatrix))
-            //bindTextureOffset(shaderProgram, it)
+            bindTextureOffset(shaderProgram, it)
             mesh.render(shaderProgram)
         }
 
@@ -72,6 +72,7 @@ open class ParticleHolder(var particles: MutableList<Particle>, val material: At
 
         val image = Math.floor(atlasProgression)
         val blend = atlasProgression % 1
+
 
         shaderProgram.setUniform("offsetImage", image)
         shaderProgram.setUniform("blend", blend)

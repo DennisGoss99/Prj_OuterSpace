@@ -11,7 +11,6 @@ open class RenderableBase(var meshes: MutableList<Mesh>, modelMatrix: Matrix4f =
 
     override fun render(shaderProgram: ShaderProgram) {
         shaderProgram.use()
-        val test = getWorldModelMatrix()
         shaderProgram.setUniform("model_matrix" , getWorldModelMatrix(),false)
         meshes.forEach { m -> m.render(shaderProgram) }
     }
