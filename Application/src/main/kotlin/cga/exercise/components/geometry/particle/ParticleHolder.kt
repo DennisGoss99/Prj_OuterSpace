@@ -78,6 +78,9 @@ open class ParticleHolder(var particles: MutableList<Particle>, val material: At
         shaderProgram.setUniform("blend", blend)
     }
 
+    private fun setTextureOffset(offset: Float){
+        //setzen wir einmal die Texturcoordinate und den Offset Piartikel? Ich denke wir setzen nur die Texturkoordinaten
+    }
     private fun getViewModelMatrix4f(particle: Particle, viewMatrix: Matrix4f) : Matrix4f{
         var modelMatrix = Matrix4f()
 
