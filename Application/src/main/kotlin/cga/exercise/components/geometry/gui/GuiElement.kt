@@ -12,11 +12,11 @@ import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL30.*
 
 
-class GuiElement(path: String,
-                 val shouldRender : List<RenderCategory>,
-                 private var scale: Vector2f = Vector2f(1f),
-                 private var translate: Vector2f  = Vector2f(0f),
-                 private var roll: Float = 0f, parent: GuiElement? = null) : Transformable2D(parent = parent ){
+open class GuiElement(path: String,
+                      val shouldRender : List<RenderCategory>,
+                      protected var scale: Vector2f = Vector2f(1f),
+                      protected var translate: Vector2f  = Vector2f(0f),
+                      protected var roll: Float = 0f, parent: GuiElement? = null) : Transformable2D(parent = parent ){
 
     private val mesh : Mesh
     private var tex : Texture2D
@@ -51,8 +51,11 @@ class GuiElement(path: String,
 
     }
 
-    fun render(shaderProgram: ShaderProgram){
+    open fun beforeRender(){
+    }
 
+    fun render(shaderProgram: ShaderProgram){
+        beforeRender()
         shaderProgram.setUniform("transformationMatrix" , getWorldModelMatrix(),false)
         mesh.render(shaderProgram)
     }

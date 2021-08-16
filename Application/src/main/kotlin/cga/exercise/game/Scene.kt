@@ -8,7 +8,6 @@ import cga.exercise.components.geometry.RenderCategory
 import cga.exercise.components.geometry.atmosphere.*
 import cga.exercise.components.geometry.skybox.*
 import cga.exercise.components.geometry.gui.*
-import cga.exercise.components.geometry.material.SimpleMaterial
 import cga.exercise.components.geometry.mesh.*
 import cga.exercise.components.geometry.transformable.Transformable
 import cga.exercise.components.light.*
@@ -86,13 +85,13 @@ class Scene(private val window: GameWindow) {
         "assets/textures/skybox/BluePinkNebular_front.png"
     ))
 
-    private val planetGui = GuiElement("assets/textures/gui/Planeten.png" ,emptyList(), Vector2f(0.25f,0.25f),Vector2f(0.5f))
-
+    private val speedDisplay = GuiElement("assets/textures/gui/SpeedSymbols.png" , renderAlways, Vector2f(0.1f,0.1f),Vector2f(-0.85f,0.9f))
+    private val speedMarker = SpeedMarker(1,"assets/textures/gui/SpeedMarker.png", renderAlways, Vector2f(1f,1f), parent = speedDisplay)
     private val gui = Gui( hashMapOf(
-        "marker" to GuiElement("assets/textures/gui/Position.png", emptyList(), Vector2f(0.25f,0.25f), translate = Vector2f(1f), parent = planetGui),
-        //"cockpit" to GuiElement("assets/textures/gui/UI.png", renderFirstPerson),
-        "outerSpace" to GuiElement("assets/textures/gui/Test.png", renderFirstPerson, Vector2f(0.20f), Vector2f(0f,0.4f)),
-        "planets" to planetGui
+        "outerSpace" to GuiElement("assets/textures/gui/Logo.png", renderFirstPerson, Vector2f(0.20f), Vector2f(0f,0.4f)),
+
+        "speedDisplay" to speedDisplay,
+        "speedMarker" to speedMarker
     ))
 
 
@@ -100,7 +99,7 @@ class Scene(private val window: GameWindow) {
         "earth",
         1f,149f,0.0001f,0.00f,Vector3f(2f,20f,0f),
         MapGeneratorMaterials.earthMaterial,
-        Atmosphere(renderAlways, 1.3f, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(208,105,70, 50))),
+        Atmosphere(renderAlways, 1.3f, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(70,105,208, 50))),
         null,
         listOf(Moon(0.27f,8f,0.001f,0.0001f,Vector3f(45.0f, 0f,0f), MapGeneratorMaterials.moonMaterial, Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))),
         Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
@@ -173,11 +172,17 @@ class Scene(private val window: GameWindow) {
         glEnable(GL_DEPTH_TEST); GLError.checkThrow()
         glDepthFunc(GL_LESS); GLError.checkThrow()
 
+
+        spaceship.modelMatrix = earth.getWorldModelMatrix()
+
+        spaceship.translateLocal(Vector3f(30f,4f, 30f))
+        spaceship.rotateLocal(0f,90f, 0f)
+
         //-- Camera init
 
             // firstPersonCamera
                 firstPersonCamera.parent = null
-                firstPersonCamera.modelMatrix = spaceship!!.getWorldModelMatrix()
+                firstPersonCamera.modelMatrix = spaceship.getWorldModelMatrix()
 
                 renderables["spaceShipInside"]!!.parent = firstPersonCamera
                 renderables["spaceShipInside"]!!.translateLocal(Vector3f(0f,-5f,-12f))
@@ -190,6 +195,7 @@ class Scene(private val window: GameWindow) {
                 thirdPersonCamera.rotateLocal(-40f,0f,0f)
 
         //--
+
 
 
 
@@ -264,7 +270,14 @@ class Scene(private val window: GameWindow) {
 
     fun update(dt: Float, t: Float) {
 
-        solarSystem.update(dt,t)
+        when(speedMarker.state){
+            1 -> solarSystem.update(dt,t)
+            2 -> {
+                solarSystem.update(dt,t)
+                solarSystem.update(dt,t)
+            }
+        }
+
 
         spaceship.updateThrusters(dt)
 
@@ -280,7 +293,7 @@ class Scene(private val window: GameWindow) {
         }
 
 
-        if (window.getKeyState ( GLFW_KEY_W)) {
+        if (window.getKeyState ( GLFW_KEY_W) && !window.getKeyState ( GLFW_KEY_T)) {
             movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt))
             spaceship.activateMainThrusters()
         }
@@ -294,7 +307,14 @@ class Scene(private val window: GameWindow) {
         }
 
         if (window.getKeyState ( GLFW_KEY_T)) {
-            movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt * 10))
+            movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt * 3))
+            spaceship.activateMainThrusters()
+            movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt * 3))
+            spaceship.activateMainThrusters()
+            movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt * 3))
+            spaceship.activateMainThrusters()
+            movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt * 3))
+            spaceship.activateMainThrusters()
         }
 
         if (cameraMode == RenderCategory.FirstPerson){
@@ -342,6 +362,9 @@ class Scene(private val window: GameWindow) {
             solarSystem = MapGenerator.generateSolarSystem()
         }
 
+        if(GLFW_KEY_TAB == key && action == 0){
+            speedMarker.addToState()
+        }
 
     }
 
@@ -358,11 +381,7 @@ class Scene(private val window: GameWindow) {
 
             }
             RenderCategory.ThirdPerson -> {
-                camera.translateLocal(Vector3f(0f, 0f, -4f))
                 camera.rotateAroundPoint((oldYpos-ypos).toFloat() * 0.002f , (oldXpos-xpos).toFloat() * 0.002f,0f, Vector3f(0f,0f,0f))
-                camera.translateLocal(Vector3f(0f, 0f, 4f))
-
-
             }
         }
 

@@ -66,10 +66,7 @@ class MapGenerator {
         }
 
         private fun generatePlanets() : List<Planet>{
-
             return clusterPlanets(1) + clusterPlanets(3)
-
-
         }
 
         private fun clusterPlanets(index : Int) : List<Planet>{
@@ -81,9 +78,9 @@ class MapGenerator {
             for (i in 1 .. amount){
 
                 val size = Random.nextInt(1,14).toFloat() / 2f
-                val distance = Random.nextInt(0,95).toFloat()
+                val distance = Random.nextInt(4,95).toFloat() * 10f
 
-                val speed = Random.nextFloat() / 250f + 0.0001f
+                val speed = (Random.nextFloat() / 1000f + 0.0001f) * 0.1f
                 val rotationAngle = Random.nextInt(0,45).toFloat()
                 val selfRotationAngle = Vector3f(Random.nextInt(-30,30).toFloat(),Random.nextInt(-30,30).toFloat(),Random.nextInt(-30,30).toFloat())
 
@@ -97,30 +94,29 @@ class MapGenerator {
                     atmosphere = Atmosphere(renderAlways, atmosphereSize, AtmosphereMaterial(MapGeneratorMaterials.basicAtmosphereTexture, Color(Random.nextInt(0,255),Random.nextInt(0,255),Random.nextInt(0,255),Random.nextInt(0,255))))
                 }else
                     if(Random.nextInt(0,11) == 0){
-
+                        ring = PlanetRing(Random.nextInt(1,4) / 2f ,0f,0f,Random.nextInt(1,4) / 2f, Vector3f(0f,0f,0f),Renderable( renderAlways ,ModelLoader.loadModel("assets/models/ring/ring.obj",0f,0f,0f)!!))
                     }
+
                 var moons = generateMoons()
 
                 planets.add(Planet("",size,index * 100f + distance,speed,rotationAngle,selfRotationAngle,MapGeneratorMaterials.PlanetMaterials[materialID],atmosphere,ring,
                     moons,Renderable( renderAlways , ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!)))
-
-                moons.forEach { it.render(ShaderProgram("assets/shaders/main_vert.glsl", "assets/shaders/main_frag.glsl"))}
             }
 
             return planets
-
         }
 
         private fun generateMoons() : List<Moon>{
 
             val moons = mutableListOf<Moon>()
 
-                val amount = Random.nextInt(0, 8)
+                val amount = Random.nextInt(1, 4)
 
                 for (i in 1..amount) {
 
-                    val size = Random.nextInt(1, 4).toFloat() / 2f
-                    val distance = Random.nextInt(50, 150).toFloat()
+                    val size = Random.nextInt(1, 50).toFloat() / 100f
+
+                    val distance = Random.nextInt(5, 20).toFloat()
 
                     val speed = Random.nextFloat() / 250f + 0.0001f
                     val rotationAngle = Random.nextInt(0, 45).toFloat()
@@ -131,7 +127,6 @@ class MapGenerator {
                     moons.add(Moon(size, distance, speed, rotationAngle, selfRotationAngle, moonMaterial,
                             Renderable(renderAlways, ModelLoader.loadModel("assets/models/sphere.obj", 0f, 0f, 0f)!!)))
                 }
-            moons.forEach { it.parent }
 
             return moons
         }
