@@ -28,10 +28,6 @@ import org.joml.Vector3f
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 
-
-/**
- * Created by Fabian on 16.09.2017.
- */
 class Scene(private val window: GameWindow) {
 
     //Shader
