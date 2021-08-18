@@ -4,6 +4,7 @@ import cga.exercise.components.Color
 import cga.exercise.components.camera.Camera
 import cga.exercise.components.camera.FirstPersonCamera
 import cga.exercise.components.camera.ThirdPersonCamera
+import cga.exercise.components.camera.ZoomCamera
 import cga.exercise.components.geometry.RenderCategory
 import cga.exercise.components.geometry.atmosphere.*
 import cga.exercise.components.geometry.skybox.*
@@ -44,7 +45,7 @@ class Scene(private val window: GameWindow) {
     private val renderFirstPerson = listOf(RenderCategory.FirstPerson)
     private val renderThirdPerson = listOf(RenderCategory.ThirdPerson)
 
-    private val spaceship = Spaceship( renderThirdPerson, Renderable( renderThirdPerson ,ModelLoader.loadModel("assets/models/Spaceship/spaceShip.obj",0f,toRadians(180f),0f)!!))
+    private val spaceship = Spaceship(Renderable( renderThirdPerson ,ModelLoader.loadModel("assets/models/Spaceship/spaceShip.obj",0f,toRadians(180f),0f)!!))
 
     private val renderables = RenderableContainer( hashMapOf(
         //"ground" to Renderable(renderAlways, ModelLoader.loadModel("assets/models/ground.obj",0f,0f,0f)!!),
@@ -71,6 +72,8 @@ class Scene(private val window: GameWindow) {
 
     private val firstPersonCamera = FirstPersonCamera()
     private val thirdPersonCamera = ThirdPersonCamera()
+
+    private val zoomCamera = ZoomCamera()
 
     var camera : Camera = firstPersonCamera
 
@@ -194,6 +197,10 @@ class Scene(private val window: GameWindow) {
                 thirdPersonCamera.translateGlobal(Vector3f(0f, 6f, 14f))
                 thirdPersonCamera.rotateLocal(-40f,0f,0f)
 
+            // zoomCamera
+                zoomCamera.parent = firstPersonCamera
+                zoomCamera.translateLocal(Vector3f(0f,0f, -zoomCamera.zoomFactor))
+
         //--
 
 
@@ -245,11 +252,12 @@ class Scene(private val window: GameWindow) {
         skyboxRenderer.render(skyBoxShader)
         //--
 
-
-
+        
         //-- Particle
-        spaceship.bindThrusters(particleShader,camera.getCalculateProjectionMatrix(),camera.getCalculateViewMatrix())
-        spaceship.renderThrusters(particleShader)
+        if(cameraMode == RenderCategory.ThirdPerson){
+            spaceship.bindThrusters(particleShader,camera.getCalculateProjectionMatrix(),camera.getCalculateViewMatrix())
+            spaceship.renderThrusters(particleShader)
+        }
         //--
 
         //-- AtmosphereShader
@@ -279,7 +287,7 @@ class Scene(private val window: GameWindow) {
         }
 
 
-        spaceship.updateThrusters(dt)
+        spaceship.updateThrusters(dt,t)
 
         val rotationMultiplier = 30f
         val translationMultiplier = 35.0f
@@ -307,14 +315,17 @@ class Scene(private val window: GameWindow) {
         }
 
         if (window.getKeyState ( GLFW_KEY_T)) {
-            movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt * 3))
-            spaceship.activateMainThrusters()
-            movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt * 3))
-            spaceship.activateMainThrusters()
-            movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt * 3))
-            spaceship.activateMainThrusters()
-            movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt * 3))
-            spaceship.activateMainThrusters()
+            for(i in 0..3){
+                movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt * 3))
+                spaceship.activateMainThrusters()
+
+                spaceship.activateRightTurnThruster()
+                spaceship.activateLeftTurnThruster()
+
+                movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt * 1.5f))
+                spaceship.activateRightTurnThruster()
+                spaceship.activateLeftTurnThruster()
+            }
         }
 
         if (cameraMode == RenderCategory.FirstPerson){
@@ -326,17 +337,22 @@ class Scene(private val window: GameWindow) {
         }
 
         if (cameraMode == RenderCategory.ThirdPerson){
-            if (window.getKeyState ( GLFW_KEY_A))
- //               movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt))
-                movingObject.rotateLocal(0.0f, rotationMultiplier* dt, 0.0f)
+            if (window.getKeyState ( GLFW_KEY_A)) {
+                movingObject.rotateLocal(0.0f, rotationMultiplier * dt, 0.0f)
+                spaceship.activateRightTurnThruster()
+            }
 
-            if (window.getKeyState ( GLFW_KEY_D))
- //               movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt))
-                movingObject.rotateLocal(0.0f, -rotationMultiplier* dt, 0.0f)
+            if (window.getKeyState ( GLFW_KEY_D)) {
+                movingObject.rotateLocal(0.0f, -rotationMultiplier * dt, 0.0f)
+                spaceship.activateLeftTurnThruster()
+            }
         }
 
 
     }
+
+    private var lastCameraMode = cameraMode
+    private var lastCamera = camera
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
 
@@ -357,6 +373,19 @@ class Scene(private val window: GameWindow) {
                     movingObject = camera
                 }
             }
+
+        if(GLFW_KEY_Y == key && action == 1){
+            lastCamera = camera
+            lastCameraMode = cameraMode
+
+            camera = zoomCamera
+            cameraMode = RenderCategory.Zoom
+        }
+        if(GLFW_KEY_Y == key && action == 0){
+            cameraMode = lastCameraMode
+            camera = lastCamera
+        }
+
 
         if(GLFW_KEY_N == key && action == 0){
             solarSystem = MapGenerator.generateSolarSystem()
@@ -392,11 +421,19 @@ class Scene(private val window: GameWindow) {
     fun onMouseScroll(xoffset: Double, yoffset: Double) {
         val yoffset = -yoffset.toFloat()
 
-        if(cameraMode == RenderCategory.FirstPerson || thirdPersonCamera.zoomFactor + yoffset < 20f)
-            return
+        if(cameraMode == RenderCategory.Zoom && zoomCamera.zoomFactor -yoffset * 12 > 20f ){
+            println(zoomCamera.zoomFactor + yoffset * 12)
+            zoomCamera.zoomFactor += yoffset * 12
+            zoomCamera.translateLocal(Vector3f(0f, 0f, -yoffset * 12))
+        }
 
-        thirdPersonCamera.zoomFactor += yoffset
-        thirdPersonCamera.translateLocal(Vector3f(0f, 0f, yoffset))
+
+        if(cameraMode == RenderCategory.ThirdPerson && thirdPersonCamera.zoomFactor + yoffset > 20f) {
+            thirdPersonCamera.zoomFactor += yoffset
+            thirdPersonCamera.translateLocal(Vector3f(0f, 0f, yoffset))
+        }
+
+
     }
 
     fun cleanup() {
@@ -406,8 +443,6 @@ class Scene(private val window: GameWindow) {
         mainShader.cleanup()
         guiShader.cleanup()
         skyBoxShader.cleanup()
-
-
     }
 
 
