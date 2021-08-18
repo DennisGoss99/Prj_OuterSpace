@@ -397,7 +397,7 @@ class Scene(private val window: GameWindow) {
     fun onMouseScroll(xoffset: Double, yoffset: Double) {
         val yoffset = -yoffset.toFloat()
 
-        if(cameraMode == RenderCategory.Zoom && zoomCamera.zoomFactor -yoffset * 12 > 20f ){
+        if(cameraMode == RenderCategory.Zoom && zoomCamera.zoomFactor + yoffset * 12 >= 20f ){
             zoomCamera.zoomFactor += yoffset * 12
             zoomCamera.translateLocal(Vector3f(0f, 0f, -yoffset * 12))
         }
