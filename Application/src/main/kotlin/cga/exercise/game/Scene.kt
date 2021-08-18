@@ -48,7 +48,6 @@ class Scene(private val window: GameWindow) {
     private val spaceship = Spaceship(Renderable( renderThirdPerson ,ModelLoader.loadModel("assets/models/Spaceship/spaceShip.obj",0f,toRadians(180f),0f)!!))
 
     private val renderables = RenderableContainer( hashMapOf(
-        //"ground" to Renderable(renderAlways, ModelLoader.loadModel("assets/models/ground.obj",0f,0f,0f)!!),
         "spaceShip" to spaceship,
         "spaceShipInside" to Renderable( renderFirstPerson ,ModelLoader.loadModel("assets/models/SpaceshipInside/spaceshipInside.obj",0f,toRadians(-90f),toRadians(0f))!!)
     ))
@@ -202,25 +201,6 @@ class Scene(private val window: GameWindow) {
                 zoomCamera.translateLocal(Vector3f(0f,0f, -zoomCamera.zoomFactor))
 
         //--
-
-
-
-
-        //Material Boden
-//        var material = Material(
-//            Texture2D("assets/textures/planets/earth_diff.png",true).setTexParams(GL_REPEAT,GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-//            Texture2D("assets/textures/ground_emit.png",true).setTexParams(GL_REPEAT,
-//                GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-//            Texture2D("assets/textures/planets/earth_spec.png",true).setTexParams(GL_REPEAT,GL_REPEAT,GL_LINEAR_MIPMAP_LINEAR,GL_LINEAR),
-//            64f,
-//            Vector2f(1f))
-
-//        renderables["ground"]?.meshes?.forEach { m ->
-//            m.material = material
-//        }
-
-
-
     }
 
 
@@ -252,7 +232,7 @@ class Scene(private val window: GameWindow) {
         skyboxRenderer.render(skyBoxShader)
         //--
 
-        
+
         //-- Particle
         if(cameraMode == RenderCategory.ThirdPerson){
             spaceship.bindThrusters(particleShader,camera.getCalculateProjectionMatrix(),camera.getCalculateViewMatrix())
@@ -422,7 +402,6 @@ class Scene(private val window: GameWindow) {
         val yoffset = -yoffset.toFloat()
 
         if(cameraMode == RenderCategory.Zoom && zoomCamera.zoomFactor -yoffset * 12 > 20f ){
-            println(zoomCamera.zoomFactor + yoffset * 12)
             zoomCamera.zoomFactor += yoffset * 12
             zoomCamera.translateLocal(Vector3f(0f, 0f, -yoffset * 12))
         }
