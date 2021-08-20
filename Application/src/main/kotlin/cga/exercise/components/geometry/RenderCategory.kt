@@ -4,6 +4,9 @@ enum class RenderCategory{
     FirstPerson,
     ThirdPerson,
     Zoom,
-    StartUpScreen,
+
+    PressToPlay,
+    Loading,
+
     HelpScreen
 }

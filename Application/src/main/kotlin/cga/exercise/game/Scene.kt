@@ -41,7 +41,7 @@ class Scene(private val window: GameWindow) {
     private val renderAlways = RenderCategory.values().toList()
     private val renderHelpScreen = listOf(RenderCategory.HelpScreen)
     private val renderMainGame = listOf(RenderCategory.FirstPerson, RenderCategory.ThirdPerson, RenderCategory.Zoom, RenderCategory.HelpScreen)
-    private val renderStartUpScreen = listOf(RenderCategory.StartUpScreen)
+    private val renderStartUpScreen = listOf(RenderCategory.Loading, RenderCategory.PressToPlay)
     private val renderFirstPerson = listOf(RenderCategory.FirstPerson)
     private val renderThirdPerson = listOf(RenderCategory.ThirdPerson)
 
@@ -65,7 +65,7 @@ class Scene(private val window: GameWindow) {
     ))
 
 
-    private var gameState = mutableListOf(RenderCategory.StartUpScreen)
+    private var gameState = mutableListOf(RenderCategory.PressToPlay)
 
     // camera
 
@@ -87,7 +87,14 @@ class Scene(private val window: GameWindow) {
         "assets/textures/skybox/BluePinkNebular_front.png"
     ))
 
-    private val animatedGuiElement = LoopAnimatedGuiElement(Animator(0.4f, listOf(Vector2f(0.0f, -0.4f),Vector2f(0.0f, -0.5f))),"assets/textures/gui/PressKeyToPlay.png", 1, renderStartUpScreen, Vector2f(0.4f,0.4f))
+    private val animatedGuiElement = LoopAnimatedGuiElement(Animator(0.4f, listOf(Vector2f(0.0f, -0.4f),Vector2f(0.0f, -0.5f))),"assets/textures/gui/PressKeyToPlay.png", 1, listOf(RenderCategory.PressToPlay), Vector2f(0.4f,0.4f))
+
+    private val loadingGuiElement = GuiElement("assets/textures/gui/Loading.png", 1, listOf(RenderCategory.Loading), Vector2f(0.4f), Vector2f(0.0f, -0.4f))
+    private val loadingBarGuiElement = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f(0.0f, 0.0f) to 0.1f, Vector2f(0.8f, 0.0f) to 99f )),"assets/textures/gui/LoadingBar.png", 2, listOf(RenderCategory.Loading), Vector2f(1f), parent = loadingGuiElement)
+    private val loadingBarGuiElement2 = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f(0.0f, 0.0f) to 0.1f, Vector2f(0.8f, 0.0f) to 99f )),"assets/textures/gui/LoadingBar.png", 3, listOf(RenderCategory.Loading), Vector2f(1f), parent = loadingGuiElement)
+    private val loadingBarGuiElement3 = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f(0.0f, 0.0f) to 0.1f, Vector2f(0.8f, 0.0f) to 99f )),"assets/textures/gui/LoadingBar.png", 4, listOf(RenderCategory.Loading), Vector2f(1f), parent = loadingGuiElement)
+
+
 
     private val animatedHelpScreen = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f( 0.6f, 1.5f) to 1.5f ,Vector2f(0.6f) to 0f)),"assets/textures/gui/HelpScreen.png", 2, renderHelpScreen, Vector2f(0.4f))
 
@@ -96,8 +103,17 @@ class Scene(private val window: GameWindow) {
     private val speedMarker = SpeedMarker(0,"assets/textures/gui/SpeedMarker.png",0, renderMainGame, Vector2f(1f,1f), parent = speedDisplay)
     private val gui = Gui( hashMapOf(
         "startupScreen" to GuiElement("assets/textures/gui/StartupScreen.png", 0, renderStartUpScreen, Vector2f(1f), Vector2f(0f)),
+
         "pressKeyToPlay" to animatedGuiElement,
+
+        "loading" to loadingGuiElement,
+        "loadingBar" to loadingBarGuiElement,
+        "loadingBar2" to loadingBarGuiElement2,
+        "loadingBar3" to loadingBarGuiElement3,
+
         "helpScreen" to animatedHelpScreen,
+
+
 
         "outerSpace" to GuiElement("assets/textures/gui/Logo.png", 0, renderFirstPerson, Vector2f(0.20f), Vector2f(0f,0.4f)),
 
@@ -209,6 +225,9 @@ class Scene(private val window: GameWindow) {
 
         //--
 
+        //configure LoadingBar
+        loadingBarGuiElement2.setPosition(Vector2f(0.1f, 0f))
+        loadingBarGuiElement3.setPosition(Vector2f(0.2f, 0f))
     }
 
 
@@ -259,7 +278,6 @@ class Scene(private val window: GameWindow) {
 
         if(t-lastTime > 0.01f)
             lastTime = t
-
     }
 
 
@@ -286,6 +304,10 @@ class Scene(private val window: GameWindow) {
 
         animatedGuiElement.update(dt,t)
         animatedHelpScreen.update(dt,t)
+        loadingBarGuiElement.update(dt,t)
+        loadingBarGuiElement2.update(dt,t)
+        loadingBarGuiElement3.update(dt,t)
+
 
         val rotationMultiplier = 30f
         val translationMultiplier = 35.0f
@@ -356,13 +378,15 @@ class Scene(private val window: GameWindow) {
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
 
-        if(gameState.contains(RenderCategory.StartUpScreen)){
+        if(gameState.contains(RenderCategory.PressToPlay)){
 
+            gameState = mutableListOf(RenderCategory.Loading)
+
+            //Load SolarSystem
             solarSystem = SolarSystem(
                 listOf(sun),
                 listOf(earth, mars, uranus, venus, saturn, jupiter),
-                listOf(AsteroidBelt(60, 8,12), AsteroidBelt(80, 28,34))
-            )
+                listOf(AsteroidBelt(60, 8,12), AsteroidBelt(80, 28,34)))
 
             gameState = mutableListOf(RenderCategory.FirstPerson)
             return
