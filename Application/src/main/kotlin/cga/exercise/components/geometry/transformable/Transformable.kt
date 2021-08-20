@@ -2,6 +2,7 @@ package cga.exercise.components.geometry.transformable
 
 import org.joml.Math.toRadians
 import org.joml.Matrix4f
+import org.joml.Vector2f
 import org.joml.Vector3f
 
 
@@ -53,6 +54,11 @@ open class Transformable(var modelMatrix: Matrix4f = Matrix4f(), var parent: Tra
      */
     fun scaleLocal(scale: Vector3f) = modelMatrix.scale(scale)
 
+    fun setPosition(position: Vector3f){
+        modelMatrix.set(3,0, position.x)
+        modelMatrix.set(3,1, position.y)
+        modelMatrix.set(3,2, position.z)
+    }
     /**
      * Returns position based on aggregated translations.
      * Hint: last column of model matrix

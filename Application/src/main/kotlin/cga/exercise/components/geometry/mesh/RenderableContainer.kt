@@ -6,10 +6,19 @@ import cga.exercise.components.shader.ShaderProgram
 
 class RenderableContainer(renderables : HashMap< String ,Renderable>) : HashMap<String, Renderable>(renderables),IRenderableContainer {
 
-    override fun render(cameraMode: RenderCategory, shaderProgram: ShaderProgram) {
-        super.entries.forEach {
-            if(it.value.shouldRender.contains(cameraMode))
-                it.value.render(shaderProgram)
+    override fun render(cameraMode: List<RenderCategory>, shaderProgram: ShaderProgram) {
+        super.entries.forEach { e ->
+            var shouldRender = false
+
+            for(r in cameraMode) {
+                if(shouldRender)
+                    break
+
+                shouldRender = e.value.shouldRender.contains(r)
+            }
+
+            if(shouldRender)
+                e.value.render(shaderProgram)
         }
     }
 

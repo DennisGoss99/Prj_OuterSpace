@@ -37,7 +37,10 @@ class Scene(private val window: GameWindow) {
     private val particleShader: ShaderProgram = ShaderProgram("assets/shaders/particle_vert.glsl", "assets/shaders/particle_frag.glsl")
     private val guiShader: ShaderProgram = ShaderProgram("assets/shaders/gui_vert.glsl", "assets/shaders/gui_frag.glsl")
 
-    private val renderAlways = listOf(RenderCategory.FirstPerson,RenderCategory.ThirdPerson)
+    private val renderAlways = RenderCategory.values().toList()
+    private val renderHelpScreen = listOf(RenderCategory.HelpScreen)
+    private val renderMainGame = listOf(RenderCategory.FirstPerson, RenderCategory.ThirdPerson, RenderCategory.Zoom, RenderCategory.HelpScreen)
+    private val renderStartUpScreen = listOf(RenderCategory.StartUpScreen)
     private val renderFirstPerson = listOf(RenderCategory.FirstPerson)
     private val renderThirdPerson = listOf(RenderCategory.ThirdPerson)
 
@@ -62,8 +65,10 @@ class Scene(private val window: GameWindow) {
 //        SpotLight(Vector3f(0f,1f,0f),Vector3f(1f,1f,0.6f),  30f, 90f )
     ))
 
+
+    private var gameState = mutableListOf(RenderCategory.StartUpScreen)
+
     // camera
-    var cameraMode = RenderCategory.FirstPerson
 
     private val firstPersonCamera = FirstPersonCamera()
     private val thirdPersonCamera = ThirdPersonCamera()
@@ -72,7 +77,7 @@ class Scene(private val window: GameWindow) {
 
     var camera : Camera = firstPersonCamera
 
-    var movingObject : Transformable = camera
+    private var movingObject : Transformable = camera
 
     private var skyboxRenderer = Skybox(20000.0f, listOf(
         "assets/textures/skybox/BluePinkNebular_right.png",
@@ -83,14 +88,23 @@ class Scene(private val window: GameWindow) {
         "assets/textures/skybox/BluePinkNebular_front.png"
     ))
 
-    private val speedDisplay = GuiElement("assets/textures/gui/SpeedSymbols.png" , renderAlways, Vector2f(0.1f,0.1f),Vector2f(-0.85f,0.9f))
-    private val speedMarker = SpeedMarker(1,"assets/textures/gui/SpeedMarker.png", renderAlways, Vector2f(1f,1f), parent = speedDisplay)
+    private val animatedGuiElement = AnimatedGuiElement(Animator(0.4f, listOf(Vector2f(0.0f, -0.4f),Vector2f(0.0f, -0.5f))),"assets/textures/gui/PressKeyToPlay.png", 1, renderStartUpScreen, Vector2f(0.4f,0.4f))
+    private val helpScreen = GuiElement("assets/textures/gui/HelpScreen.png" , 2, renderHelpScreen, Vector2f(0.4f),Vector2f(0.6f,0.6f))
+
+
+    private val speedDisplay = GuiElement("assets/textures/gui/SpeedSymbols.png" , 1, renderMainGame, Vector2f(0.1f,0.1f),Vector2f(-0.85f,0.9f))
+    private val speedMarker = SpeedMarker(1,"assets/textures/gui/SpeedMarker.png",0, renderMainGame, Vector2f(1f,1f), parent = speedDisplay)
     private val gui = Gui( hashMapOf(
-        "outerSpace" to GuiElement("assets/textures/gui/Logo.png", renderFirstPerson, Vector2f(0.20f), Vector2f(0f,0.4f)),
+        "startupScreen" to GuiElement("assets/textures/gui/StartupScreen.png", 0, renderStartUpScreen, Vector2f(1f), Vector2f(0f)),
+        "pressKeyToPlay" to animatedGuiElement,
+        "helpScreen" to helpScreen,
+
+        "outerSpace" to GuiElement("assets/textures/gui/Logo.png", 0, renderFirstPerson, Vector2f(0.20f), Vector2f(0f,0.4f)),
 
         "speedDisplay" to speedDisplay,
         "speedMarker" to speedMarker
     ))
+
 
 
     private val earth = Planet(
@@ -197,6 +211,7 @@ class Scene(private val window: GameWindow) {
                 zoomCamera.translateLocal(Vector3f(0f,0f, -zoomCamera.zoomFactor))
 
         //--
+
     }
 
 
@@ -216,7 +231,7 @@ class Scene(private val window: GameWindow) {
             mainShader.setUniform("time", t)
 
         camera.bind(mainShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
-        renderables.render(cameraMode, mainShader)
+        renderables.render(gameState, mainShader)
 
         solarSystem.renderSpaceObjects(mainShader)
 
@@ -230,7 +245,7 @@ class Scene(private val window: GameWindow) {
 
 
         //-- Particle
-        if(cameraMode == RenderCategory.ThirdPerson){
+        if(gameState.contains( RenderCategory.ThirdPerson)){
             spaceship.bindThrusters(particleShader,camera.getCalculateProjectionMatrix(),camera.getCalculateViewMatrix())
             spaceship.renderThrusters(particleShader)
         }
@@ -242,7 +257,7 @@ class Scene(private val window: GameWindow) {
         //--
 
         //-- GuiShader
-        gui.render(cameraMode, guiShader)
+        gui.render(gameState, guiShader)
         //--
 
         if(t-lastTime > 0.01f)
@@ -262,8 +277,12 @@ class Scene(private val window: GameWindow) {
             }
         }
 
-
         spaceship.updateThrusters(dt,t)
+
+        //Animated GUI
+
+        animatedGuiElement.update(dt,t)
+
 
         val rotationMultiplier = 30f
         val translationMultiplier = 35.0f
@@ -304,7 +323,7 @@ class Scene(private val window: GameWindow) {
             }
         }
 
-        if (cameraMode == RenderCategory.FirstPerson){
+        if (gameState.contains(RenderCategory.FirstPerson)){
             if (window.getKeyState ( GLFW_KEY_A))
                 movingObject.rotateLocal(0.0f, 0.0f, rotationMultiplier* dt)
 
@@ -312,7 +331,7 @@ class Scene(private val window: GameWindow) {
                 movingObject.rotateLocal(0.0f, 0.0f, -rotationMultiplier* dt)
         }
 
-        if (cameraMode == RenderCategory.ThirdPerson){
+        if (gameState.contains(RenderCategory.ThirdPerson)){
             if (window.getKeyState ( GLFW_KEY_A)) {
                 movingObject.rotateLocal(0.0f, rotationMultiplier * dt, 0.0f)
                 spaceship.activateRightTurnThruster()
@@ -327,38 +346,57 @@ class Scene(private val window: GameWindow) {
 
     }
 
-    private var lastCameraMode = cameraMode
+    private var lastCameraMode = gameState
     private var lastCamera = camera
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
 
-        if(GLFW_KEY_F5 == key && action == 0)
-            when(cameraMode){
+        if(gameState.contains(RenderCategory.StartUpScreen)){
+            gameState = mutableListOf(RenderCategory.FirstPerson)
+            return
+        }
 
-                RenderCategory.FirstPerson ->{
+        if(GLFW_KEY_F1 == key && action == 0){
+            if(gameState.contains(RenderCategory.HelpScreen)){
+                gameState.remove(RenderCategory.HelpScreen)
+            }else{
+                gameState.add(RenderCategory.HelpScreen)
+            }
+
+        }
+
+        if(GLFW_KEY_F5 == key && action == 0)
+            when{
+                gameState.contains(RenderCategory.FirstPerson) ->{
                     spaceship.modelMatrix = firstPersonCamera.modelMatrix
                     camera = thirdPersonCamera
-                    cameraMode = RenderCategory.ThirdPerson
+
+                    gameState.remove(RenderCategory.FirstPerson)
+                    gameState.add(RenderCategory.ThirdPerson)
 
                     movingObject = spaceship
                 }
-                RenderCategory.ThirdPerson -> {
+                gameState.contains(RenderCategory.ThirdPerson) -> {
 
                     camera = firstPersonCamera
-                    cameraMode = RenderCategory.FirstPerson
+
+                    gameState.remove(RenderCategory.ThirdPerson)
+                    gameState.add(RenderCategory.FirstPerson)
+
                     movingObject = camera
                 }
             }
 
         if(GLFW_KEY_Y == key && action == 1){
             lastCamera = camera
-            lastCameraMode = cameraMode
+            lastCameraMode = gameState
 
             camera = zoomCamera
-            cameraMode = RenderCategory.Zoom
+            gameState.add(RenderCategory.Zoom)
         }
         if(GLFW_KEY_Y == key && action == 0){
-            cameraMode = lastCameraMode
+            gameState.remove(RenderCategory.Zoom)
+            gameState = lastCameraMode
             camera = lastCamera
         }
 
@@ -379,16 +417,16 @@ class Scene(private val window: GameWindow) {
 
     fun onMouseMove(xpos: Double, ypos: Double) {
 
-        when(cameraMode){
+        if(!gameState.contains(RenderCategory.Zoom))
+            when{
+                gameState.contains(RenderCategory.FirstPerson) ->{
+                    camera.rotateLocal((oldYpos-ypos).toFloat()/20.0f, (oldXpos-xpos).toFloat()/20.0f, 0f)
 
-            RenderCategory.FirstPerson ->{
-                camera.rotateLocal((oldYpos-ypos).toFloat()/20.0f, (oldXpos-xpos).toFloat()/20.0f, 0f)
-
+                }
+                gameState.contains(RenderCategory.ThirdPerson) -> {
+                    camera.rotateAroundPoint((oldYpos-ypos).toFloat() * 0.002f , (oldXpos-xpos).toFloat() * 0.002f,0f, Vector3f(0f,0f,0f))
+                }
             }
-            RenderCategory.ThirdPerson -> {
-                camera.rotateAroundPoint((oldYpos-ypos).toFloat() * 0.002f , (oldXpos-xpos).toFloat() * 0.002f,0f, Vector3f(0f,0f,0f))
-            }
-        }
 
         oldXpos = xpos
         oldYpos = ypos
@@ -397,13 +435,13 @@ class Scene(private val window: GameWindow) {
     fun onMouseScroll(xoffset: Double, yoffset: Double) {
         val yoffset = -yoffset.toFloat()
 
-        if(cameraMode == RenderCategory.Zoom && zoomCamera.zoomFactor + yoffset * 12 >= 20f ){
+        if(gameState.contains(RenderCategory.Zoom) && zoomCamera.zoomFactor + yoffset * 12 >= 20f ){
             zoomCamera.zoomFactor += yoffset * 12
             zoomCamera.translateLocal(Vector3f(0f, 0f, -yoffset * 12))
         }
 
 
-        if(cameraMode == RenderCategory.ThirdPerson && thirdPersonCamera.zoomFactor + yoffset > 20f) {
+        if(gameState.contains(RenderCategory.ThirdPerson) && thirdPersonCamera.zoomFactor + yoffset > 20f) {
             thirdPersonCamera.zoomFactor += yoffset
             thirdPersonCamera.translateLocal(Vector3f(0f, 0f, yoffset))
         }

@@ -10,18 +10,27 @@ import kotlin.collections.HashMap
 
 class Gui(guiElements: HashMap< String , GuiElement>) : HashMap< String , GuiElement>(guiElements), IRenderableContainer {
 
+    private val guiRenderOrder : List<GuiElement> = guiElements.values.sortedBy { it.zAxisPosition }
 
-
-    override fun render(cameraMode: RenderCategory, shaderProgram: ShaderProgram){
+    override fun render(cameraMode: List<RenderCategory>, shaderProgram: ShaderProgram){
         shaderProgram.use()
 
         GL30.glEnable(GL11.GL_BLEND)
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA,GL11.GL_ONE_MINUS_SRC_ALPHA)
         GL11.glDisable(GL11.GL_DEPTH_TEST)
 
-        super.entries.forEach {
-            if(it.value.shouldRender.contains(cameraMode))
-                it.value.render(shaderProgram)
+        guiRenderOrder.forEach { g ->
+            var shouldRender = false
+
+            for(r in cameraMode) {
+                if(shouldRender)
+                    break
+
+                shouldRender = g.shouldRender.contains(r)
+            }
+
+            if(shouldRender)
+                g.render(shaderProgram)
         }
 
         GL11.glEnable(GL11.GL_DEPTH_TEST)

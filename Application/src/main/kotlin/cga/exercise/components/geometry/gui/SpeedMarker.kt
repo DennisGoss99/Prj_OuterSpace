@@ -6,12 +6,13 @@ import org.joml.Vector2f
 class SpeedMarker(
     var state : Int = 0,
     path: String,
+    zAxisPosition : Int,
     shouldRender: List<RenderCategory>,
     scale: Vector2f = Vector2f(1f),
     translate: Vector2f = Vector2f(0f),
     roll: Float = 0f,
     parent: GuiElement? = null
-) : GuiElement(path, shouldRender, scale, translate, roll, parent) {
+) : GuiElement(path, zAxisPosition, shouldRender, scale, translate, roll, parent) {
 
 
     fun addToState() {

@@ -2,6 +2,7 @@ package cga.exercise.components.geometry.transformable
 
 import org.joml.*
 import org.joml.Math.toRadians
+import java.text.FieldPosition
 
 open class Transformable2D (var modelMatrix : Matrix4f = Matrix4f(), var parent: Transformable2D? = null) {
 
@@ -35,6 +36,11 @@ open class Transformable2D (var modelMatrix : Matrix4f = Matrix4f(), var parent:
         val tempVector = Vector3f();
         modelMatrix.getColumn(3,tempVector)
         return Vector2f(tempVector.x,tempVector.y);
+    }
+
+    fun setPosition(position: Vector2f){
+        modelMatrix.set(3,0, position.x)
+        modelMatrix.set(3,1, position.y)
     }
 
     fun getWorldPosition(): Vector2f {
