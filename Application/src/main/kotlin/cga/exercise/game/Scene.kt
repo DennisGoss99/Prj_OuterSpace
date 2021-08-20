@@ -9,6 +9,7 @@ import cga.exercise.components.geometry.RenderCategory
 import cga.exercise.components.geometry.atmosphere.*
 import cga.exercise.components.geometry.skybox.*
 import cga.exercise.components.geometry.gui.*
+import cga.exercise.components.geometry.gui.animation.*
 import cga.exercise.components.geometry.mesh.*
 import cga.exercise.components.geometry.transformable.Transformable
 import cga.exercise.components.light.*
@@ -88,8 +89,10 @@ class Scene(private val window: GameWindow) {
         "assets/textures/skybox/BluePinkNebular_front.png"
     ))
 
-    private val animatedGuiElement = AnimatedGuiElement(Animator(0.4f, listOf(Vector2f(0.0f, -0.4f),Vector2f(0.0f, -0.5f))),"assets/textures/gui/PressKeyToPlay.png", 1, renderStartUpScreen, Vector2f(0.4f,0.4f))
+    private val animatedGuiElement = LoopAnimatedGuiElement(Animator(0.4f, listOf(Vector2f(0.0f, -0.4f),Vector2f(0.0f, -0.5f))),"assets/textures/gui/PressKeyToPlay.png", 1, renderStartUpScreen, Vector2f(0.4f,0.4f))
     private val helpScreen = GuiElement("assets/textures/gui/HelpScreen.png" , 2, renderHelpScreen, Vector2f(0.4f),Vector2f(0.6f,0.6f))
+
+    private val animatedHelpScreen = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f( 0.6f, 1.5f) to 1.5f ,Vector2f(0.6f) to 0f)),"assets/textures/gui/HelpScreen.png", 2, renderHelpScreen, Vector2f(0.4f))
 
 
     private val speedDisplay = GuiElement("assets/textures/gui/SpeedSymbols.png" , 1, renderMainGame, Vector2f(0.1f,0.1f),Vector2f(-0.85f,0.9f))
@@ -97,7 +100,7 @@ class Scene(private val window: GameWindow) {
     private val gui = Gui( hashMapOf(
         "startupScreen" to GuiElement("assets/textures/gui/StartupScreen.png", 0, renderStartUpScreen, Vector2f(1f), Vector2f(0f)),
         "pressKeyToPlay" to animatedGuiElement,
-        "helpScreen" to helpScreen,
+        "helpScreen" to animatedHelpScreen,
 
         "outerSpace" to GuiElement("assets/textures/gui/Logo.png", 0, renderFirstPerson, Vector2f(0.20f), Vector2f(0f,0.4f)),
 
@@ -282,7 +285,7 @@ class Scene(private val window: GameWindow) {
         //Animated GUI
 
         animatedGuiElement.update(dt,t)
-
+        animatedHelpScreen.update(dt,t)
 
         val rotationMultiplier = 30f
         val translationMultiplier = 35.0f
@@ -360,6 +363,7 @@ class Scene(private val window: GameWindow) {
             if(gameState.contains(RenderCategory.HelpScreen)){
                 gameState.remove(RenderCategory.HelpScreen)
             }else{
+                animatedHelpScreen.changeCurrentLocationState(0)
                 gameState.add(RenderCategory.HelpScreen)
             }
 
