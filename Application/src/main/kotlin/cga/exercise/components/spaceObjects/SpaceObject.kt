@@ -39,5 +39,4 @@ init {
         rotateLocal( selfRotation.x, selfRotation.y, selfRotation.z)
     }
 
-
 }

@@ -96,7 +96,7 @@ class Scene(private val window: GameWindow) {
 
 
     private val speedDisplay = GuiElement("assets/textures/gui/SpeedSymbols.png" , 1, renderMainGame, Vector2f(0.1f,0.1f),Vector2f(-0.85f,0.9f))
-    private val speedMarker = SpeedMarker(1,"assets/textures/gui/SpeedMarker.png",0, renderMainGame, Vector2f(1f,1f), parent = speedDisplay)
+    private val speedMarker = SpeedMarker(0,"assets/textures/gui/SpeedMarker.png",0, renderMainGame, Vector2f(1f,1f), parent = speedDisplay)
     private val gui = Gui( hashMapOf(
         "startupScreen" to GuiElement("assets/textures/gui/StartupScreen.png", 0, renderStartUpScreen, Vector2f(1f), Vector2f(0f)),
         "pressKeyToPlay" to animatedGuiElement,
@@ -169,10 +169,7 @@ class Scene(private val window: GameWindow) {
         Atmosphere(listOf(RenderCategory.FirstPerson, RenderCategory.ThirdPerson), 1.2f, MapGeneratorMaterials.sunAtmosphereMaterial),
         Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
 
-    private var solarSystem = SolarSystem(
-        listOf(sun),
-        listOf(earth, mars, uranus, venus, saturn, jupiter)
-    )
+    private var solarSystem = SolarSystem(emptyList(), emptyList(), emptyList())
 
     //scene setup
     init {
@@ -277,8 +274,14 @@ class Scene(private val window: GameWindow) {
             2 -> {
                 solarSystem.update(dt,t)
                 solarSystem.update(dt,t)
+                solarSystem.update(dt,t)
             }
         }
+        if(window.getKeyState(GLFW_KEY_SPACE)){
+            for(i in 0..15)
+                solarSystem.update(dt,t)
+        }
+
 
         spaceship.updateThrusters(dt,t)
 
@@ -311,6 +314,8 @@ class Scene(private val window: GameWindow) {
         if (window.getKeyState ( GLFW_KEY_G)) {
             movingObject.translateLocal(Vector3f(0.0f, 0.0f, translationMultiplier * dt * 10))
         }
+
+
 
         if (window.getKeyState ( GLFW_KEY_T)) {
             for(i in 0..3){
@@ -355,6 +360,13 @@ class Scene(private val window: GameWindow) {
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
 
         if(gameState.contains(RenderCategory.StartUpScreen)){
+
+            solarSystem = SolarSystem(
+                listOf(sun),
+                listOf(earth, mars, uranus, venus, saturn, jupiter),
+                listOf(AsteroidBelt(40, 8,14), AsteroidBelt(50, 26,34))
+            )
+
             gameState = mutableListOf(RenderCategory.FirstPerson)
             return
         }

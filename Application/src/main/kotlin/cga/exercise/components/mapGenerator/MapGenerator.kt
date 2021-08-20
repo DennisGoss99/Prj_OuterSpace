@@ -25,7 +25,8 @@ class MapGenerator {
 
             return SolarSystem(
                 generateSun(),
-                generatePlanets())
+                generatePlanets(),
+                emptyList())
 
         }
 
