@@ -52,8 +52,6 @@ class Scene(private val window: GameWindow) {
         "spaceShipInside" to Renderable( renderFirstPerson ,ModelLoader.loadModel("assets/models/SpaceshipInside/spaceshipInside.obj",0f,toRadians(-90f),toRadians(0f))!!)
     ))
 
-    //Material Moon
-
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
     private val pointLightHolder = PointLightHolder( mutableListOf(
@@ -90,7 +88,6 @@ class Scene(private val window: GameWindow) {
     ))
 
     private val animatedGuiElement = LoopAnimatedGuiElement(Animator(0.4f, listOf(Vector2f(0.0f, -0.4f),Vector2f(0.0f, -0.5f))),"assets/textures/gui/PressKeyToPlay.png", 1, renderStartUpScreen, Vector2f(0.4f,0.4f))
-    private val helpScreen = GuiElement("assets/textures/gui/HelpScreen.png" , 2, renderHelpScreen, Vector2f(0.4f),Vector2f(0.6f,0.6f))
 
     private val animatedHelpScreen = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f( 0.6f, 1.5f) to 1.5f ,Vector2f(0.6f) to 0f)),"assets/textures/gui/HelpScreen.png", 2, renderHelpScreen, Vector2f(0.4f))
 
@@ -364,7 +361,7 @@ class Scene(private val window: GameWindow) {
             solarSystem = SolarSystem(
                 listOf(sun),
                 listOf(earth, mars, uranus, venus, saturn, jupiter),
-                listOf(AsteroidBelt(40, 8,14), AsteroidBelt(50, 26,34))
+                listOf(AsteroidBelt(60, 8,12), AsteroidBelt(80, 28,34))
             )
 
             gameState = mutableListOf(RenderCategory.FirstPerson)

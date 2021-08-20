@@ -14,19 +14,23 @@ class SpeedMarker(
     parent: GuiElement? = null
 ) : GuiElement(path, zAxisPosition, shouldRender, scale, translate, roll, parent) {
 
+    init {
+        when(state){
+            0 -> setPosition( Vector2f(-0.67f,0f))
+            1 -> setPosition( Vector2f(0f,0f))
+            2 -> setPosition( Vector2f(0.67f,0f))
+        }
+    }
 
     fun addToState() {
         state = (state + 1) % 3
 
-        translateLocal(translate.negate())
-
         when(state){
-            0 -> translate.x = -0.67f
-            1 -> translate.x = 0f
-            2 -> translate.x = 0.67f
+            0 -> setPosition( Vector2f(-0.67f,0f))
+            1 -> setPosition( Vector2f(0f,0f))
+            2 -> setPosition( Vector2f(0.67f,0f))
         }
 
-        translateLocal(translate)
     }
 
 
