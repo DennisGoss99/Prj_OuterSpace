@@ -9,7 +9,7 @@ https://youtu.be/uEeNadJq5RM
 https://github.com/DennisGoss99/CGA_Project
 
 # Teammitglieder
-Listen Sie hier noch einmal alle Teammitglieder auf.
+
 - Anastasia Chouliaras [11139952]
 - Dennis Goßler [11140150]
 
