@@ -5,14 +5,6 @@
 **Video:**
 https://youtu.be/uEeNadJq5RM
 
-**new-Repo**
-https://github.com/DennisGoss99/CGA_Project
-
-# Teammitglieder
-
-- Anastasia Chouliaras [11139952]
-- Dennis Goßler [11140150]
-
 # Featureliste
 
 ## Anmerkung:
