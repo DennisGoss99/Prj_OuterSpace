@@ -15,7 +15,7 @@ class FontType(val path : String) {
     private val PAD_BOTTOM = 2
     private val PAD_RIGHT = 3
 
-    private val DESIRED_PADDING = 3f
+    private val DESIRED_PADDING = 8f
 
     protected val LINE_HEIGHT = 0.03f
     protected val SPACE_ASCII = 32f

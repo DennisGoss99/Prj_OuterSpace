@@ -46,13 +46,13 @@ class Scene(private val window: GameWindow) {
     private val guiShader: ShaderProgram = ShaderProgram("assets/shaders/gui_vert.glsl", "assets/shaders/gui_frag.glsl")
     private val fontShader: ShaderProgram = ShaderProgram("assets/shaders/font_vert.glsl", "assets/shaders/font_frag.glsl")
 
-    private var gameState = mutableListOf(RenderCategory.Loading)
+//    private var gameState = mutableListOf(RenderCategory.Loading)
 
-    private val loadingGuiElement = GuiElement("assets/textures/gui/Loading.png", 1, listOf(RenderCategory.Loading), Vector2f(0.4f), Vector2f(0.0f, -0.4f))
-    private val gui = Gui( hashMapOf( "pressKeyToPlay" to loadingGuiElement))
+//    private val loadingGuiElement = GuiElement("assets/textures/gui/Loading.png", 1, listOf(RenderCategory.Loading), Vector2f(0.4f), Vector2f(0.0f, -0.4f))
+//    private val gui = Gui( hashMapOf( "pressKeyToPlay" to loadingGuiElement))
 
 
-    private val test = Text(hashMapOf(fonts["Calibri"]!! to listOf(GuiText("hallo",10f ,fonts["Calibri"]!!,30f,false, Vector2f(0.5f, 0f), parent = loadingGuiElement))))
+    private val test = Text(hashMapOf(fonts["Calibri"]!! to listOf(GuiText("hallo",10f ,fonts["Calibri"]!!,30f,false, Vector2f(0.5f, 0f)))))
 
     private val renderAlways = RenderCategory.values().toList()
 //    private val renderHelpScreen = listOf(RenderCategory.HelpScreen)
@@ -300,7 +300,7 @@ class Scene(private val window: GameWindow) {
 //        //--
 //
         //-- GuiShader
-        gui.render(gameState, guiShader)
+        //gui.render(gameState, guiShader)
 
         test.render(renderAlways, fontShader)
 
