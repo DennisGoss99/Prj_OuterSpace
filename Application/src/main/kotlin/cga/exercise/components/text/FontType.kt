@@ -1,5 +1,6 @@
 package cga.exercise.components.text
 
+import cga.exercise.components.geometry.material.SimpleMaterial
 import cga.exercise.components.texture.Texture2D
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.GL_LINEAR
@@ -53,7 +54,7 @@ class FontType(val path : String) {
 
     var kerningCount = 0
 
-    val fontImage : Texture2D
+    val fontImageMaterial : SimpleMaterial
 
 
     init {
@@ -124,7 +125,7 @@ class FontType(val path : String) {
             }
         }
 
-        fontImage = Texture2D.invoke(path.substringBeforeLast('/') + "/" + fontPath,false).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR)
+        fontImageMaterial = SimpleMaterial(Texture2D.invoke(path.substringBeforeLast('/') + "/" + fontPath,false).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR))
     }
 
     private fun getSubLine(line: String): List<String> {
@@ -146,13 +147,6 @@ class FontType(val path : String) {
 
         return returnList
     }
-
-    fun bind(textureUnit: Int) = fontImage.bind(textureUnit)
-
-    fun unbind() = fontImage.unbind()
-
-    fun cleanup() = fontImage.cleanup()
-
 
     private fun getStringValue(raw : String, name : String) : String{
         if(! raw.startsWith(name))

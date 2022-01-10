@@ -43,10 +43,16 @@ class Scene(private val window: GameWindow) {
 //    private val skyBoxShader: ShaderProgram = ShaderProgram("assets/shaders/skyBox_vert.glsl", "assets/shaders/skyBox_frag.glsl")
 //    private val atmosphereShader: ShaderProgram = ShaderProgram("assets/shaders/atmosphere_vert.glsl", "assets/shaders/atmosphere_frag.glsl")
 //    private val particleShader: ShaderProgram = ShaderProgram("assets/shaders/particle_vert.glsl", "assets/shaders/particle_frag.glsl")
-//    private val guiShader: ShaderProgram = ShaderProgram("assets/shaders/gui_vert.glsl", "assets/shaders/gui_frag.glsl")
+    private val guiShader: ShaderProgram = ShaderProgram("assets/shaders/gui_vert.glsl", "assets/shaders/gui_frag.glsl")
     private val fontShader: ShaderProgram = ShaderProgram("assets/shaders/font_vert.glsl", "assets/shaders/font_frag.glsl")
 
-    private val test = Text(hashMapOf(fonts["Comic Sans MS"]!! to listOf(GuiText("Hihi Comic Sans",2f,fonts["Comic Sans MS"]!!,30f,false,null))))
+    private var gameState = mutableListOf(RenderCategory.Loading)
+
+    private val loadingGuiElement = GuiElement("assets/textures/gui/Loading.png", 1, listOf(RenderCategory.Loading), Vector2f(0.4f), Vector2f(0.0f, -0.4f))
+    private val gui = Gui( hashMapOf( "pressKeyToPlay" to loadingGuiElement))
+
+
+    private val test = Text(hashMapOf(fonts["Calibri"]!! to listOf(GuiText("hallo",10f ,fonts["Calibri"]!!,30f,false, Vector2f(0.5f, 0f), parent = loadingGuiElement))))
 
     private val renderAlways = RenderCategory.values().toList()
 //    private val renderHelpScreen = listOf(RenderCategory.HelpScreen)
@@ -75,7 +81,7 @@ class Scene(private val window: GameWindow) {
     ))
 
 
-    private var gameState = mutableListOf(RenderCategory.PressToPlay)
+
 
     // camera
 
@@ -99,7 +105,10 @@ class Scene(private val window: GameWindow) {
 
     private val animatedGuiElement = LoopAnimatedGuiElement(Animator(0.4f, listOf(Vector2f(0.0f, -0.4f),Vector2f(0.0f, -0.5f))),"assets/textures/gui/PressKeyToPlay.png", 1, listOf(RenderCategory.PressToPlay), Vector2f(0.4f,0.4f))
 
-    private val loadingGuiElement = GuiElement("assets/textures/gui/Loading.png", 1, listOf(RenderCategory.Loading), Vector2f(0.4f), Vector2f(0.0f, -0.4f))
+    */
+
+
+    /*
     private val loadingBarGuiElement = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f(0.0f, 0.0f) to 0.1f, Vector2f(0.8f, 0.0f) to 99f )),"assets/textures/gui/LoadingBar.png", 2, listOf(RenderCategory.Loading), Vector2f(1f), parent = loadingGuiElement)
     private val loadingBarGuiElement2 = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f(0.0f, 0.0f) to 0.1f, Vector2f(0.8f, 0.0f) to 99f )),"assets/textures/gui/LoadingBar.png", 3, listOf(RenderCategory.Loading), Vector2f(1f), parent = loadingGuiElement)
     private val loadingBarGuiElement3 = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f(0.0f, 0.0f) to 0.1f, Vector2f(0.8f, 0.0f) to 99f )),"assets/textures/gui/LoadingBar.png", 4, listOf(RenderCategory.Loading), Vector2f(1f), parent = loadingGuiElement)
@@ -253,7 +262,7 @@ class Scene(private val window: GameWindow) {
 
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
-        test.render(renderAlways, fontShader)
+
         //test2.render(fontShader)
 //        //-- main Shader
 //        pointLightHolder.bind(mainShader,"pointLight")
@@ -290,8 +299,10 @@ class Scene(private val window: GameWindow) {
 //        solarSystem.renderAtmosphere(atmosphereShader)
 //        //--
 //
-//        //-- GuiShader
-//        gui.render(gameState, guiShader)
+        //-- GuiShader
+        gui.render(gameState, guiShader)
+
+        test.render(renderAlways, fontShader)
 
         //--
 

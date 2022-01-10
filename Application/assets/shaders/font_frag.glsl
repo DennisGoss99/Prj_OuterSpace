@@ -9,7 +9,5 @@ uniform sampler2D fontAtlas;
 
 void main() {
 
-    //out_color = texture(fontAtlas, pass_textureCoords);
-
-    out_color = vec4(1.0f, 1.0f, 1.0f, texture(fontAtlas, pass_textureCoords).a);
+    out_color = vec4(color, texture(fontAtlas, pass_textureCoords).a);
 }

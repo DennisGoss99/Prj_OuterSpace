@@ -1,26 +1,44 @@
 package cga.exercise.components.geometry.gui
 
 import cga.exercise.components.geometry.VertexAttribute
+import cga.exercise.components.geometry.material.SimpleMaterial
 import cga.exercise.components.geometry.mesh.Mesh
-import cga.exercise.components.geometry.mesh.SimpleMesh
 import cga.exercise.components.geometry.transformable.Transformable2D
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.text.FontType
+import org.joml.Vector2f
+import org.joml.Vector3f
 import org.lwjgl.opengl.GL11
+import java.util.*
 
-class GuiText (val text : String, val fontSize : Float, val font : FontType, val maxLineLength : Float,
-               val centered : Boolean, parent: GuiElement? = null) : Transformable2D(parent = parent ){
+class GuiText (val text : String, var fontSize : Float, val font : FontType, val maxLineLength : Float,
+               val centered : Boolean, translate : Vector2f = Vector2f(0f,0f), roll : Float = 0f, parent: GuiElement? = null) : Transformable2D(parent = parent ){
 
+    private var mesh : Mesh
+    private var cursorX = 0f
+    private var cursorY = 0f
 
-    val meshes = mutableListOf<Mesh>()
-    //val texCoords = mutableListOf<Float>()
-    var cursorX = 0f
-    var cursorY = 0f
+    private var vertexData = mutableListOf<Float>()
+    private var iboData = mutableListOf<Int>()
+    private var iboCursor = 0
+
+    private var color = Vector3f(1f,0f,0f)
 
     init {
+        fontSize /= 3
+
         text.forEach { c ->
             setLetter(c)
         }
+
+        val vao = arrayOf(
+            VertexAttribute(2, GL11.GL_FLOAT,16,0),
+            VertexAttribute(2, GL11.GL_FLOAT,16,8)
+        )
+
+        mesh = Mesh(vertexData.toFloatArray(),iboData.toIntArray(),vao, font.fontImageMaterial)
+        translateLocal(translate)
+        rotateLocal(roll)
     }
 
     private fun setLetter(character : Char){
@@ -36,44 +54,34 @@ class GuiText (val text : String, val fontSize : Float, val font : FontType, val
         val properMaxY = (-2 * maxY) + 1
 
         addVertices(properX, properY, properMaxX, properMaxY, fontTypeChar.xTextureCoord, fontTypeChar.yTextureCoord, fontTypeChar.xMaxTextureCoord, fontTypeChar.yMaxTextureCoord)
-
         cursorX += fontTypeChar.xAdvance * fontSize
     }
 
     private fun addVertices(x: Float, y: Float, maxX: Float, maxY: Float, texx: Float, texy: Float, texmaxX: Float, texmaxY: Float) {
-        val vao = arrayOf(
-            VertexAttribute(2, GL11.GL_FLOAT,16,0),
-            VertexAttribute(2, GL11.GL_FLOAT,16,8)
-        )
-        val ibo = intArrayOf(
-            0,1,2,
-            2,3,0
-        )
+        Collections.addAll(vertexData,
+        x, y, texx, texy,
+        x, maxY, texx, texmaxY,
+        maxX, maxY, texmaxX, texmaxY,
+        maxX, y, texmaxX, texy)
 
-        meshes.add(Mesh(floatArrayOf(
-            x,y, texx,texy,
-            x,maxY, texx,texmaxY,
-            maxX,maxY, texmaxX,texmaxY,
-            maxX,y, texmaxX,texy
-        ), ibo, vao,null))
+        Collections.addAll(iboData,
+            iboCursor, iboCursor+1, iboCursor+2,
+            iboCursor+2,iboCursor+3,iboCursor)
+
+        iboCursor += 4
     }
 
     fun render(shaderProgram : ShaderProgram){
-        //beforeRender()
-        //shaderProgram.setUniform("transformationMatrix" , getWorldModelMatrix(),false)
-        //mesh.render(shaderProgram)
-        //shaderProgram.setUniform("textureCoords",)
-
-        meshes.forEach {
-            it.render(shaderProgram)
-        }
+        shaderProgram.setUniform("transformationMatrix" , getWorldModelMatrix(),false)
+        shaderProgram.setUniform("color" , color)
+        mesh.render(shaderProgram)
     }
 
     /**
      * Deletes the previously allocated OpenGL objects for this mesh
      */
     fun cleanup() {
-        meshes.forEach { it.cleanup()}
+        mesh.cleanup()
     }
 
 

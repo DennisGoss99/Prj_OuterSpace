@@ -18,8 +18,6 @@ class Text (var textElements: HashMap< FontType , List<GuiText>>) : IRenderableC
         GL11.glDisable(GL11.GL_DEPTH_TEST)
 
         textElements.forEach {
-            shaderProgram.setUniform("fontAtlas", 0)
-            it.key.fontImage.bind(0)
             it.value.forEach { text->
                 text.render(shaderProgram)
             }
