@@ -19,6 +19,7 @@ import cga.exercise.components.mapGenerator.SolarSystem
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.spaceObjects.*
 import cga.exercise.components.spaceObjects.spaceship.Spaceship
+import cga.exercise.components.text.FontType
 import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
 import cga.framework.GameWindow
@@ -31,28 +32,37 @@ import org.lwjgl.opengl.GL11.*
 
 class Scene(private val window: GameWindow) {
 
-    //Shader
-    private val mainShader: ShaderProgram = ShaderProgram("assets/shaders/main_vert.glsl", "assets/shaders/main_frag.glsl")
-    private val skyBoxShader: ShaderProgram = ShaderProgram("assets/shaders/skyBox_vert.glsl", "assets/shaders/skyBox_frag.glsl")
-    private val atmosphereShader: ShaderProgram = ShaderProgram("assets/shaders/atmosphere_vert.glsl", "assets/shaders/atmosphere_frag.glsl")
-    private val particleShader: ShaderProgram = ShaderProgram("assets/shaders/particle_vert.glsl", "assets/shaders/particle_frag.glsl")
-    private val guiShader: ShaderProgram = ShaderProgram("assets/shaders/gui_vert.glsl", "assets/shaders/gui_frag.glsl")
+
+    var fonts = hashMapOf("Arial" to FontType("assets/fonts/Arial.fnt"),
+                          "Calibri" to FontType("assets/fonts/Calibri.fnt"),
+                          "Comic Sans MS" to FontType("assets/fonts/Comic Sans MS.fnt"),
+                          "Times New Roman" to FontType("assets/fonts/Times New Roman.fnt"))
+
+//    //Shader
+//    private val mainShader: ShaderProgram = ShaderProgram("assets/shaders/main_vert.glsl", "assets/shaders/main_frag.glsl")
+//    private val skyBoxShader: ShaderProgram = ShaderProgram("assets/shaders/skyBox_vert.glsl", "assets/shaders/skyBox_frag.glsl")
+//    private val atmosphereShader: ShaderProgram = ShaderProgram("assets/shaders/atmosphere_vert.glsl", "assets/shaders/atmosphere_frag.glsl")
+//    private val particleShader: ShaderProgram = ShaderProgram("assets/shaders/particle_vert.glsl", "assets/shaders/particle_frag.glsl")
+//    private val guiShader: ShaderProgram = ShaderProgram("assets/shaders/gui_vert.glsl", "assets/shaders/gui_frag.glsl")
+    private val fontShader: ShaderProgram = ShaderProgram("assets/shaders/font_vert.glsl", "assets/shaders/font_frag.glsl")
+
+    private val test = Text(hashMapOf(fonts["Comic Sans MS"]!! to listOf(GuiText("Hihi Comic Sans",2f,fonts["Comic Sans MS"]!!,30f,false,null))))
 
     private val renderAlways = RenderCategory.values().toList()
-    private val renderHelpScreen = listOf(RenderCategory.HelpScreen)
-    private val renderMainGame = listOf(RenderCategory.FirstPerson, RenderCategory.ThirdPerson, RenderCategory.Zoom, RenderCategory.HelpScreen)
-    private val renderStartUpScreen = listOf(RenderCategory.Loading, RenderCategory.PressToPlay)
-    private val renderFirstPerson = listOf(RenderCategory.FirstPerson)
-    private val renderThirdPerson = listOf(RenderCategory.ThirdPerson)
+//    private val renderHelpScreen = listOf(RenderCategory.HelpScreen)
+//    private val renderMainGame = listOf(RenderCategory.FirstPerson, RenderCategory.ThirdPerson, RenderCategory.Zoom, RenderCategory.HelpScreen)
+//    private val renderStartUpScreen = listOf(RenderCategory.Loading, RenderCategory.PressToPlay)
+//    private val renderFirstPerson = listOf(RenderCategory.FirstPerson)
+//    private val renderThirdPerson = listOf(RenderCategory.ThirdPerson)
+//
+//    private val spaceship = Spaceship(Renderable( renderThirdPerson ,ModelLoader.loadModel("assets/models/Spaceship/spaceShip.obj",0f,toRadians(180f),0f)!!))
+//
+//    private val renderables = RenderableContainer( hashMapOf(
+//        "spaceShip" to spaceship,
+//        "spaceShipInside" to Renderable( renderFirstPerson ,ModelLoader.loadModel("assets/models/SpaceshipInside/spaceshipInside.obj",0f,toRadians(-90f),toRadians(0f))!!)
+//    ))
 
-    private val spaceship = Spaceship(Renderable( renderThirdPerson ,ModelLoader.loadModel("assets/models/Spaceship/spaceShip.obj",0f,toRadians(180f),0f)!!))
-
-    private val renderables = RenderableContainer( hashMapOf(
-        "spaceShip" to spaceship,
-        "spaceShipInside" to Renderable( renderFirstPerson ,ModelLoader.loadModel("assets/models/SpaceshipInside/spaceshipInside.obj",0f,toRadians(-90f),toRadians(0f))!!)
-    ))
-
-
+/*
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
     private val pointLightHolder = PointLightHolder( mutableListOf(
         PointLight(Vector3f(0f,4f,5f), Color(150 * 8 ,245 * 8,255 * 8).toVector3f(), renderables["spaceShipInside"])
@@ -183,7 +193,7 @@ class Scene(private val window: GameWindow) {
         Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
 
     private var solarSystem = SolarSystem(emptyList(), emptyList(), emptyList())
-
+    */
     //scene setup
     init {
         
@@ -198,6 +208,10 @@ class Scene(private val window: GameWindow) {
         glDepthFunc(GL_LESS); GLError.checkThrow()
 
 
+
+
+
+        /*
         spaceship.modelMatrix = earth.getWorldModelMatrix()
 
         spaceship.translateLocal(Vector3f(30f,4f, 30f))
@@ -228,6 +242,8 @@ class Scene(private val window: GameWindow) {
         //configure LoadingBar
         loadingBarGuiElement2.setPosition(Vector2f(0.1f, 0f))
         loadingBarGuiElement3.setPosition(Vector2f(0.2f, 0f))
+
+         */
     }
 
 
@@ -237,43 +253,46 @@ class Scene(private val window: GameWindow) {
 
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
-        //-- main Shader
-        pointLightHolder.bind(mainShader,"pointLight")
-        spotLightHolder.bind(mainShader,"spotLight", camera.getCalculateViewMatrix())
+        test.render(renderAlways, fontShader)
+        //test2.render(fontShader)
+//        //-- main Shader
+//        pointLightHolder.bind(mainShader,"pointLight")
+//        spotLightHolder.bind(mainShader,"spotLight", camera.getCalculateViewMatrix())
+//
+//        mainShader.setUniform("emitColor", Vector3f(0f,0.5f,1f))
+//
+//        if(t-lastTime > 0.01f)
+//            mainShader.setUniform("time", t)
+//
+//        camera.bind(mainShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
+//        renderables.render(gameState, mainShader)
+//
+//        solarSystem.renderSpaceObjects(mainShader)
+//
+//
+//
+//        //-- SkyBoxShader
+//
+//        SkyboxPerspective.bind(skyBoxShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
+//        skyboxRenderer.render(skyBoxShader)
+//        //--
+//
+//
+//        //-- Particle
+//        if(gameState.contains( RenderCategory.ThirdPerson)){
+//            spaceship.bindThrusters(particleShader,camera.getCalculateProjectionMatrix(),camera.getCalculateViewMatrix())
+//            spaceship.renderThrusters(particleShader)
+//        }
+//        //--
+//
+//        //-- AtmosphereShader
+//        atmospherePerspective.bind(atmosphereShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
+//        solarSystem.renderAtmosphere(atmosphereShader)
+//        //--
+//
+//        //-- GuiShader
+//        gui.render(gameState, guiShader)
 
-        mainShader.setUniform("emitColor", Vector3f(0f,0.5f,1f))
-
-        if(t-lastTime > 0.01f)
-            mainShader.setUniform("time", t)
-
-        camera.bind(mainShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
-        renderables.render(gameState, mainShader)
-
-        solarSystem.renderSpaceObjects(mainShader)
-
-
-
-        //-- SkyBoxShader
-
-        SkyboxPerspective.bind(skyBoxShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
-        skyboxRenderer.render(skyBoxShader)
-        //--
-
-
-        //-- Particle
-        if(gameState.contains( RenderCategory.ThirdPerson)){
-            spaceship.bindThrusters(particleShader,camera.getCalculateProjectionMatrix(),camera.getCalculateViewMatrix())
-            spaceship.renderThrusters(particleShader)
-        }
-        //--
-
-        //-- AtmosphereShader
-        atmospherePerspective.bind(atmosphereShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
-        solarSystem.renderAtmosphere(atmosphereShader)
-        //--
-
-        //-- GuiShader
-        gui.render(gameState, guiShader)
         //--
 
         if(t-lastTime > 0.01f)
@@ -283,7 +302,7 @@ class Scene(private val window: GameWindow) {
 
 
     fun update(dt: Float, t: Float) {
-
+        /*
         when(speedMarker.state){
             1 -> solarSystem.update(dt,t)
             2 -> {
@@ -371,13 +390,15 @@ class Scene(private val window: GameWindow) {
         }
 
 
+         */
+
     }
 
-    private var lastCameraMode = gameState
-    private var lastCamera = camera
+    //private var lastCameraMode = gameState
+    //private var lastCamera = camera
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
-
+        /*
         if(gameState.contains(RenderCategory.PressToPlay)){
 
             gameState = mutableListOf(RenderCategory.Loading)
@@ -446,6 +467,8 @@ class Scene(private val window: GameWindow) {
             speedMarker.addToState()
         }
 
+         */
+
     }
 
 
@@ -453,7 +476,7 @@ class Scene(private val window: GameWindow) {
     var oldYpos : Double = 0.0
 
     fun onMouseMove(xpos: Double, ypos: Double) {
-
+        /*
         if(!gameState.contains(RenderCategory.Zoom))
             when{
                 gameState.contains(RenderCategory.FirstPerson) ->{
@@ -467,9 +490,12 @@ class Scene(private val window: GameWindow) {
 
         oldXpos = xpos
         oldYpos = ypos
+        */
+
     }
 
     fun onMouseScroll(xoffset: Double, yoffset: Double) {
+        /*
         val yoffset = -yoffset.toFloat()
 
         if(gameState.contains(RenderCategory.Zoom) && zoomCamera.zoomFactor + yoffset * 12 >= 20f ){
@@ -482,17 +508,20 @@ class Scene(private val window: GameWindow) {
             thirdPersonCamera.zoomFactor += yoffset
             thirdPersonCamera.translateLocal(Vector3f(0f, 0f, yoffset))
         }
-
+        */
 
     }
 
     fun cleanup() {
+        /*
         renderables.cleanup()
         gui.cleanup()
 
         mainShader.cleanup()
         guiShader.cleanup()
         skyBoxShader.cleanup()
+
+         */
     }
 
 
