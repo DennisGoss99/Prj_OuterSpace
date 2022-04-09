@@ -47,6 +47,7 @@ open class GuiElement(path: String,
 
         mesh = Mesh(VBO, IBO, VAO, material)
 
+
         translateLocal(translate)
         rotateLocal(roll)
         scaleLocal(scale)

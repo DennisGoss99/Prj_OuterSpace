@@ -76,11 +76,16 @@ class Mesh(vertexdata: FloatArray, indexdata: IntArray, attributes: Array<Vertex
     /**
      * Deletes the previously allocated OpenGL objects for this mesh
      */
-    fun cleanup() {
+    fun cleanupMesh(){
         if (ibo != 0) GL15.glDeleteBuffers(ibo)
         if (vbo != 0) GL15.glDeleteBuffers(vbo)
         if (vao != 0) GL30.glDeleteVertexArrays(vao)
+    }
 
+    fun cleanup() {
+        cleanupMesh()
         material?.cleanup()
     }
+
+
 }
